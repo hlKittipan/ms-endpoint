@@ -1,5 +1,7 @@
 const { request } = require("express");
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
+const timestamp = require('mongoose-timestamp')
+
 
 var postSchema = mongoose.Schema({
   // กำหนด ชื่อและชนิดของ document เรา
