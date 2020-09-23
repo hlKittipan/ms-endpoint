@@ -43,6 +43,10 @@ db.once("open", () => {
   console.log("Server started on port " + config.PORT);
 });
 
+// get single customer
+server.get('/test', async (req, res, next) => {
+  res.send("Hi")
+});
 // app.use(bodyParser.json());
 
 // const jwt = require("jwt-simple");
