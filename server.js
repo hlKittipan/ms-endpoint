@@ -5,7 +5,10 @@ const mongoose = require("mongoose");
 // const app = express();
 const restify = require("restify");
 const config = require("./config");
-const rjwt = require('restify-jwt-community');
+const rjwt = require("restify-jwt-community");
+const axios = require("axios");
+const querystring = require('querystring');
+
 
 const server = restify.createServer();
 
@@ -44,14 +47,35 @@ db.once("open", () => {
 });
 
 // test
-server.get('/:id', async (req, res, next) => {
+server.get("/:id", async (req, res, next) => {
   const id = req.params.id;
-  const arr_id = id.split('-')
+  const arr_id = id.split("-");
   const upthree = arr_id[0];
-  const uptwo = upthree.toString().substr(1,2);
+  const uptwo = upthree.toString().substr(1, 2);
   const downtwo = arr_id[1];
-  var result = (((parseInt(upthree)+parseInt(uptwo)+parseInt(downtwo))*2)*2).toString()
-  result = result.substr(result.length - 3)
+  var result = ((parseInt(upthree) + parseInt(uptwo) + parseInt(downtwo)) * 2 * 2 ).toString();
+  result = result.substr(result.length - 3);
+  const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
+  var msg = result;
+  console.log(msg)
+  axios({
+    method: 'post',
+    url: 'https://notify-api.line.me/api/notify',
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Access-Control-Allow-Origin': '*'
+    },
+    data: querystring.stringify({
+      message: msg,
+    })
+  })
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      //console.log(error);
+    });
   res.send(result);
 });
 // app.use(bodyParser.json());
