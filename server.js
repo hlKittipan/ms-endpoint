@@ -43,9 +43,16 @@ db.once("open", () => {
   console.log("Server started on port " + config.PORT);
 });
 
-// get single customer
-server.get('/test', async (req, res, next) => {
-  res.send("Hi")
+// test
+server.get('/:id', async (req, res, next) => {
+  const id = req.params.id;
+  const arr_id = id.split('-')
+  const upthree = arr_id[0];
+  const uptwo = upthree.toString().substr(1,2);
+  const downtwo = arr_id[1];
+  var result = (((parseInt(upthree)+parseInt(uptwo)+parseInt(downtwo))*2)*2).toString()
+  result = result.substr(result.length - 3)
+  res.send(result);
 });
 // app.use(bodyParser.json());
 
