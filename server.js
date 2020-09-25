@@ -7,8 +7,7 @@ const restify = require("restify");
 const config = require("./config");
 const rjwt = require("restify-jwt-community");
 const axios = require("axios");
-const querystring = require('querystring');
-
+const querystring = require("querystring");
 
 const server = restify.createServer();
 
@@ -19,21 +18,21 @@ server.use(restify.plugins.bodyParser());
 //server.use(rjwt({ secret: config.JWT_SERCRET}).unless({ path: ['/auth']}));
 
 server.listen(config.PORT, () => {
-  mongoose.set("useFindAndModify", false);
-  mongoose
-    .connect(config.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
-    .then(
-      () => {
-        console.log("[success] task  : connected to the database ");
-      },
-      (error) => {
-        console.log("[failed] task  " + error);
-        process.exit();
-      }
-    );
+    mongoose.set("useFindAndModify", false);
+    mongoose
+        .connect(config.MONGODB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        })
+        .then(
+            () => {
+                console.log("[success] task  : connected to the database ");
+            },
+            (error) => {
+                console.log("[failed] task  " + error);
+                process.exit();
+            }
+        );
 });
 
 const db = mongoose.connection;
@@ -41,45 +40,15 @@ const db = mongoose.connection;
 db.on("error", (err) => console.log(err));
 
 db.once("open", () => {
-  require("./routes/customers")(server);
-  require("./routes/users")(server);
-  console.log("Server started on port " + config.PORT);
+    require("./routes/customers")(server);
+    require("./routes/users")(server);
+    require("./routes/huays")(server);
+    console.log("Server started on port " + config.PORT);
 });
 
 // test
-server.get("/:id", async (req, res, next) => {
-  if (false){
-    const id = req.params.id;
-    const arr_id = id.split("-");
-    const upthree = arr_id[0];
-    const uptwo = upthree.toString().substr(1, 2);
-    const downtwo = arr_id[1];
-    var result = ((parseInt(upthree) + parseInt(uptwo) + parseInt(downtwo)) * 2 * 2 ).toString();
-    result = result.substr(result.length - 3);
-    const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
-    var msg = result;
-    console.log(msg)
-    axios({
-      method: 'post',
-      url: 'https://notify-api.line.me/api/notify',
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Access-Control-Allow-Origin': '*'
-      },
-      data: querystring.stringify({
-        message: msg,
-      })
-    })
-      .then(function (response) {
-        //console.log(response);
-      })
-      .catch(function (error) {
-        //console.log(error);
-      });
-    res.send(result);
-  }
- 
+server.get("/", async(req, res, next) => {
+    res.send('Hello world'+ Date.now());
 });
 
 // app.use(bodyParser.json());
