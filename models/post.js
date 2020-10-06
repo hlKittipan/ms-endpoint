@@ -13,11 +13,17 @@ var postSchema = mongoose.Schema({
     type: String,
     request: true
   },
+  tag: {},
+  category: {},
   author: {
     type: String,
     request: true
   },
-  image: {
+  status: {
+    type: Number ,
+  },
+  image: {},
+  user_id:{
     type: String
   }
 }, {

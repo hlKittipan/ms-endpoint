@@ -1,6 +1,7 @@
 const errors = require("restify-errors");
 const rjwt = require("restify-jwt-community");
 const Huay = require("../controllers/huays");
+const Lotto = require("../controllers/lotto");
 const config = require("../config");
 const { DateTime } = require("luxon");
 const axios = require("axios");
@@ -100,10 +101,15 @@ module.exports = (server) => {
     const three = id.toString().substr(2, 1);
     const four = id.toString().substr(3, 1);
     const five = id.toString().substr(4, 1);
-
+    const number_default = [[1,2] , [2], [3], [2,4], [3,4], [3,7], [0,7,9], [0,7], [5,6], [6,8]];
+    const current_data = { 
+      "three_top" : one + two + three,
+      "two_top" : two + three,
+      "two_under" : four + five
+    }
     const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
-    var msg = '';
-    console.log(one + two + three + four + five);
+    var msg = one + two + three + four + five;
+
     // axios({
     //   method: "post",
     //   url: "https://notify-api.line.me/api/notify",
@@ -122,11 +128,29 @@ module.exports = (server) => {
     //   .catch(function (error) {
     //     //console.log(error);
     //   });
-    // res.send(result);
+    const result =  Lotto.findData(false, res, next, current_data);
+    console.log(result)
+    res.send({msg});
+    next();
   });
 };
 
-cron.schedule("22 22 22 * * *", function () {
+cron.schedule("00 5 * * * *", function () {
+  // Huay.getDataFromHuay()
+  console.log(DateTime.local().toFormat("F"));
+});
+
+cron.schedule("00 20 * * * *", function () {
+  // Huay.getDataFromHuay()
+  console.log(DateTime.local().toFormat("F"));
+});
+
+cron.schedule("00 35 * * * *", function () {
+  // Huay.getDataFromHuay()
+  console.log(DateTime.local().toFormat("F"));
+});
+
+cron.schedule("00 50 * * * *", function () {
   // Huay.getDataFromHuay()
   console.log(DateTime.local().toFormat("F"));
 });
