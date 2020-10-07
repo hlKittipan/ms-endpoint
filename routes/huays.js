@@ -101,7 +101,7 @@ module.exports = (server) => {
     const three = id.toString().substr(2, 1);
     const four = id.toString().substr(3, 1);
     const five = id.toString().substr(4, 1);
-    const number_default = [[1,2] , [2], [3], [2,4], [3,4], [3,7], [0,7,9], [0,7], [5,6], [6,8]];
+    const number_default = ["12", "2", "3", "24", "34", "37", "07,9", "07", "56", "68"];
     const current_data = { 
       "three_top" : one + two + three,
       "two_top" : two + three,
@@ -109,7 +109,16 @@ module.exports = (server) => {
     }
     const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
     var msg = one + two + three + four + five;
-
+    let guess = number_default[four] + number_default[five]
+    if (guess.length <= 6){
+      guess_count = 6-parseInt(guess.length)
+      for (i = 1; i < guess_count; i++) {
+        guess = guess+(parseInt(guess.slice(-1))+1)
+      }
+      console.log(guess_count)
+    }else {
+      console.log("Max");
+    }
     // axios({
     //   method: "post",
     //   url: "https://notify-api.line.me/api/notify",
@@ -129,8 +138,7 @@ module.exports = (server) => {
     //     //console.log(error);
     //   });
     const result =  Lotto.findData(false, res, next, current_data);
-    console.log(result)
-    res.send({msg});
+    res.send({guess});
     next();
   });
 };

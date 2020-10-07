@@ -5,10 +5,14 @@ const date = DateTime.local().toFormat("dd/LL/yyyy");
 module.exports = {
 
   findData: (req, res, next, current_data) => {
+    let newLotto = ''
     const lotto = Lotto.findOne({ date: date }).then(function (value) {
-      if (!value) throw createData(req, res, next, true , 0, current_data);
-      createData(value, res, next, false, value._id, current_data);
-      //console.log(value)
+      if (value == null) {
+        newLotto = createData(req, res, next, true , 0, current_data);
+      }else {
+        newLotto = createData(value, res, next, false, value._id, current_data);
+      }
+      return newLotto
     });
     return lotto
   },
@@ -65,15 +69,17 @@ function createData (req, res, next, isCreate, id, curent_data) {
       date,
       yeekee,
     });
-    const newLotto = lotto.save();
-    return {status : 201 , msg : "test"}
+    const newLotto = lotto.save()
+    //.then(function (value) {console.log(value)});
+    return newLotto
   }else {    
     const filter = { _id: id };
     const update = { date: date ,yeekee : yeekee };
     //console.log(update)
     const lotto = Lotto.findOneAndUpdate(filter, update, {
       returnOriginal: false
-    }).then(function (value) {console.log(value)});
-    return {status : 200 , msg : "test"}
+    })
+    //.then(function (value) {console.log(value)});
+    return lotto
   }
 }
