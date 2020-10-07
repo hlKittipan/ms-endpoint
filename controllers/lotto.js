@@ -12,9 +12,9 @@ module.exports = {
       }else {
         newLotto = createData(value, res, next, false, value._id, current_data);
       }
-      return newLotto
     });
-    return lotto
+    console.log(newLotto)
+    next(lotto)
   },
 
   getDataFromLotto: () => {
@@ -64,22 +64,22 @@ function createData (req, res, next, isCreate, id, curent_data) {
 
   yeekee[last_key] = curent_data
 
+  let newLotto = ""
+
   if (isCreate){
     const lotto = new Lotto({
       date,
       yeekee,
     });
-    const newLotto = lotto.save()
-    //.then(function (value) {console.log(value)});
-    return newLotto
+    lotto.save().then(function (value) {newLotto = value});
   }else {    
     const filter = { _id: id };
     const update = { date: date ,yeekee : yeekee };
     //console.log(update)
-    const lotto = Lotto.findOneAndUpdate(filter, update, {
+    newLotto = Lotto.findOneAndUpdate(filter, update, {
       returnOriginal: false
     })
     //.then(function (value) {console.log(value)});
-    return lotto
   }
+  return newLotto;
 }

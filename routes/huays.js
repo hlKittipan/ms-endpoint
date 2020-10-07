@@ -101,7 +101,7 @@ module.exports = (server) => {
     const three = id.toString().substr(2, 1);
     const four = id.toString().substr(3, 1);
     const five = id.toString().substr(4, 1);
-    const number_default = ["12", "2", "3", "24", "34", "37", "07,9", "07", "56", "68"];
+    const number_default = ["12", "627", "230", "245", "326", "370", "079", "802", "562", "68"];
     const current_data = { 
       "three_top" : one + two + three,
       "two_top" : two + three,
@@ -110,15 +110,13 @@ module.exports = (server) => {
     const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
     var msg = one + two + three + four + five;
     let guess = number_default[four] + number_default[five]
-    if (guess.length <= 6){
-      guess_count = 6-parseInt(guess.length)
-      for (i = 1; i < guess_count; i++) {
-        guess = guess+(parseInt(guess.slice(-1))+1)
-      }
-      console.log(guess_count)
-    }else {
-      console.log("Max");
-    }
+    let remove_duplicate = guess.replace(/(.)(?=.*\1)/g, "");
+
+    do {
+      numberAfterGenerate = generateNumber(remove_duplicate)
+      remove_duplicate = numberAfterGenerate.replace(/(.)(?=.*\1)/g, "");
+    } while ( remove_duplicate.length < 5)
+    
     // axios({
     //   method: "post",
     //   url: "https://notify-api.line.me/api/notify",
@@ -138,7 +136,8 @@ module.exports = (server) => {
     //     //console.log(error);
     //   });
     const result =  Lotto.findData(false, res, next, current_data);
-    res.send({guess});
+    console.log(result);
+    res.send({remove_duplicate});
     next();
   });
 };
@@ -162,3 +161,16 @@ cron.schedule("00 50 * * * *", function () {
   // Huay.getDataFromHuay()
   console.log(DateTime.local().toFormat("F"));
 });
+
+
+function generateNumber (number) {
+  guess_count = 5-parseInt(number.length)
+  for (i = 0; i < guess_count; i++) {
+    lastNum = (parseInt(number.slice(-1))+1)
+    if (lastNum == 10) {
+      lastNum = "0"
+    }
+    number = number+lastNum
+  }  
+  return number
+}
