@@ -2,18 +2,19 @@ const Lotto = require("../models/lotto");
 const { DateTime } = require("luxon");
 const axios = require("axios");
 const querystring = require("querystring");
-
+const line = require("@line/bot-sdk");
+const config = require("../config");
 
 const date = DateTime.local().toFormat("dd/LL/yyyy");
 module.exports = {
 
-  findData: async (req, res, next, current_data, remove_duplicate) => {
+  findData: async (req, res, next, current_data, remove_duplicate, user_id) => {
     let newLotto = ''
     const lotto = await Lotto.findOne({ date: date }).then(function (value) {
       if (value == null) {
-        newLotto = createData(req, res, next, true , 0, current_data, remove_duplicate);
+        newLotto = createData(req, res, next, true , 0, current_data, remove_duplicate,user_id);
       }else {
-        newLotto = createData(value, res, next, false, value._id, current_data, remove_duplicate);
+        newLotto = createData(value, res, next, false, value._id, current_data, remove_duplicate,user_id);
       }
     });
     console.log(newLotto)
@@ -72,7 +73,7 @@ function loopGetNum (number) {
   return number
 }
 
-async function  createData (req, res, next, isCreate, id, curent_data, remove_duplicate) {
+async function  createData (req, res, next, isCreate, id, curent_data, remove_duplicate, user_id) {
   const data = req != false ? req.yeekee : false ;
   const yeekee = [];
   let last_key = 0
@@ -142,26 +143,23 @@ async function  createData (req, res, next, isCreate, id, curent_data, remove_du
 
     msg = msg + " งวดที่ " + (parseInt(n)+parseInt(key)) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show + "\r\n"
   }  
-  const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
-
-  axios({
-    method: "post",
-    url: "https://notify-api.line.me/api/notify",
-    headers: {
-      Authorization: "Bearer " + token,
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Access-Control-Allow-Origin": "*",
-    },
-    data: querystring.stringify({
-      message: msg,
-    }),
-  })
-  .then(function (response) {
-    //console.log(response);
-  })
-  .catch(function (error) {
-    //console.log(error);
+  const client = new line.Client({
+    channelAccessToken: config.LINE_BOT,
   });
+  const message = {
+    type: "text",
+    text: msg,
+  };
+
+  client
+    .pushMessage(user_id, message)
+    .then((response) => {
+      //console.log(response);
+    })
+    .catch((err) => {
+      console.log(err.response.status);
+    });
+
   res.send(msg);
   next();
 }

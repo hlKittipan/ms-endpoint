@@ -100,7 +100,8 @@ module.exports = (server) => {
   });
 
   server.get("/lotto/:id", async (req, res, next) => {
-    const id = req.params.id;
+    let getReq = [req.params.id]
+    const id = getReq[0];
     const one = id.toString().substr(0, 1);
     const two = id.toString().substr(1, 1);
     const three = id.toString().substr(2, 1);
@@ -135,67 +136,12 @@ module.exports = (server) => {
     //   .catch(function (error) {
     //     //console.log(error);
     //   });
-    const result =  Lotto.findData(false, res, next, current_data, remove_duplicate);
+    const result =  Lotto.findData(false, res, next, current_data, remove_duplicate, getReq[1]);
     // res.send(result);
     // next();
   });
 
-  
-  server.post("/webhooks", async(req, res, next) => {
-    // const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
-    const token = "sxZX9ZftGr17P6Hrc7M4pBi67B3Q4yyBOEyciKrtVwu";
-
-    let reply_token = req.body.events[0].replyToken
-    let msg = req.body.events[0].message.text
-    let id_group = req.body.events[0].source.groupId
-    reply(reply_token, msg,id_group)
-    console.log(req.body);
-    axios({
-      method: "post",
-      url: "https://notify-api.line.me/api/notify",
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Access-Control-Allow-Origin": "*",
-      },
-      data: querystring.stringify({
-        message: JSON.stringify(req.body),
-      }),
-    })
-      .then(function (response) {
-        //console.log(response);
-      })
-      .catch(function (error) {
-        //console.log(error);
-      });
-    res.send(200)
-  });
-
 };
-
-function reply(reply_token, msg, id_group) {
-  let headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + config.LINE_BOT
-  }
-  let body = JSON.stringify(JSON.stringify({
-    to: "U63a3a3722c5e501e9728b8ea4dcbb9a9",
-    // to: "C1e2a34222671bb93da7bbca980d86c18", //Group สูตร
-    messages: [{
-      type: "sticker",
-      packageId: 11537,
-      stickerId: 52002744
-    }]
-  }))
-
-  request.post({
-      url: 'https://api.line.me/v2/bot/message/push',
-      headers: headers,
-      body: body
-  }, (err, res, body) => {
-      console.log('status = ' + res.statusCode);
-  });
-}
 
 cron.schedule("00 5 * * * *", function () {
   // Huay.getDataFromHuay()

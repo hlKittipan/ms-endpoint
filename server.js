@@ -8,7 +8,6 @@ const config = require("./config");
 const rjwt = require("restify-jwt-community");
 const axios = require("axios");
 const querystring = require("querystring");
-const request = require("request");
 
 const server = restify.createServer();
 
@@ -54,31 +53,21 @@ server.get("/", async (req, res, next) => {
 
 server.post("/webhook", async (req, res, next) => {
   const token = "sxZX9ZftGr17P6Hrc7M4pBi67B3Q4yyBOEyciKrtVwu";
-
-  // axios({
-  //   method: "post",
-  //   url: "https://notify-api.line.me/api/notify",
-  //   headers: {
-  //     Authorization: "Bearer " + token,
-  //     "Content-Type": "application/x-www-form-urlencoded",
-  //     "Access-Control-Allow-Origin": "*",
-  //   },
-  //   data: querystring.stringify({
-  //     message: JSON.stringify(req.body),
-  //   }),
-  // })
-  //   .then(function (response) {
-  //     //console.log(response);
-  //   })
-  //   .catch(function (error) {
-  //     //console.log(error);
-  //   });
-
   let reply_token = req.body.events[0].replyToken;
   let msg = req.body.events[0].message.text;
-  if (msg == "Bot") {
+  let user_id = req.body.events[0].source.userId
+  if(msg.split(' ')[0] === 'bot'){
+    axios
+    .get("https://intense-reaches-16002.herokuapp.com/lotto/"+msg[1]+","+ user_id)
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error.response.status);
+    });
     reply(reply_token);
   }
+
   res.send(200);
 });
 
@@ -101,7 +90,7 @@ function reply(reply_token) {
       },
     ],
   });
-  
+
   axios
     .post("https://api.line.me/v2/bot/message/reply", body, {
       headers: headers,
@@ -112,31 +101,6 @@ function reply(reply_token) {
     .catch(function (error) {
       console.log(error.response.status);
     });
-
-  let data = JSON.stringify(
-    JSON.stringify({
-      to: "U63a3a3722c5e501e9728b8ea4dcbb9a9",
-      // to: "C1e2a34222671bb93da7bbca980d86c18", //Group สูตร
-      messages: [
-        {
-          type: "text",
-          text: "What the fuck"
-        }
-      ]
-    })
-  );
-
-  axios
-    .post("https://api.line.me/v2/bot/message/push", data, {
-      headers: headers,
-    })
-    .then(function (response) {
-      //console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error.response.status);
-    });
- 
 }
 
 server.post("/webhook-push", async (req, res, next) => {
@@ -150,8 +114,8 @@ server.post("/webhook-push", async (req, res, next) => {
         {
           type: "text",
           text: "What the fuck",
-        }
-      ]
+        },
+      ],
     })
   );
   let headers = {
