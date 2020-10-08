@@ -51,6 +51,10 @@ server.get("/", async(req, res, next) => {
     res.send('Hello world'+ Date.now());
 });
 
+server.post("/webhooks", async(req, res, next) => {
+    res.send(200);
+});
+
 // app.use(bodyParser.json());
 
 // const jwt = require("jwt-simple");

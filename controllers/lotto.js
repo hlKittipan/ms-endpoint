@@ -1,20 +1,23 @@
 const Lotto = require("../models/lotto");
 const { DateTime } = require("luxon");
+const axios = require("axios");
+const querystring = require("querystring");
+
 
 const date = DateTime.local().toFormat("dd/LL/yyyy");
 module.exports = {
 
-  findData: (req, res, next, current_data) => {
+  findData: async (req, res, next, current_data, remove_duplicate) => {
     let newLotto = ''
-    const lotto = Lotto.findOne({ date: date }).then(function (value) {
+    const lotto = await Lotto.findOne({ date: date }).then(function (value) {
       if (value == null) {
-        newLotto = createData(req, res, next, true , 0, current_data);
+        newLotto = createData(req, res, next, true , 0, current_data, remove_duplicate);
       }else {
-        newLotto = createData(value, res, next, false, value._id, current_data);
+        newLotto = createData(value, res, next, false, value._id, current_data, remove_duplicate);
       }
     });
     console.log(newLotto)
-    next(lotto)
+    
   },
 
   getDataFromLotto: () => {
@@ -48,7 +51,28 @@ module.exports = {
   }
 };
 
-function createData (req, res, next, isCreate, id, curent_data) {
+
+function generateNumber (number) {
+  guess_count = 5-parseInt(number.length)
+  for (i = 0; i < guess_count; i++) {
+    lastNum = (parseInt(number.slice(-1))+1)
+    if (lastNum == 10) {
+      lastNum = "0"
+    }
+    number = number+lastNum
+  }  
+  return number
+}
+
+function loopGetNum (number) {
+  do {
+    numberAfterGenerate = generateNumber(number)
+    number = numberAfterGenerate.replace(/(.)(?=.*\1)/g, "");
+  } while ( number.length < 5)
+  return number
+}
+
+async function  createData (req, res, next, isCreate, id, curent_data, remove_duplicate) {
   const data = req != false ? req.yeekee : false ;
   const yeekee = [];
   let last_key = 0
@@ -71,15 +95,73 @@ function createData (req, res, next, isCreate, id, curent_data) {
       date,
       yeekee,
     });
-    lotto.save().then(function (value) {newLotto = value});
+    await lotto.save().then(function (value) {newLotto = value});
   }else {    
     const filter = { _id: id };
     const update = { date: date ,yeekee : yeekee };
     //console.log(update)
-    newLotto = Lotto.findOneAndUpdate(filter, update, {
+    await Lotto.findOneAndUpdate(filter, update, {
       returnOriginal: false
     })
-    //.then(function (value) {console.log(value)});
+    .then(function (value) {newLotto = value});
   }
-  return newLotto;
+
+  let msg = "ปักล่างหน่วย 4 รอบมั้ง \r\n";
+  let n = 1;
+  let result_num = "";
+  let re_gen = 1;
+
+  for (const key in newLotto.yeekee) {
+    const id = yeekee[key].two_under;
+    const one = id.toString().substr(0, 1);
+    const two = id.toString().substr(1, 1);
+    const number_default = ["12", "627", "230", "245", "326", "370", "079", "802", "562", "68"];
+    let guess = number_default[one] + number_default[two]
+    let remove_duplicate = guess.replace(/(.)(?=.*\1)/g, "");
+    if (key == 0) {
+      result_num = loopGetNum(remove_duplicate);
+      show = result_num;
+    } else {
+      let n = result_num.indexOf(two);
+      if ( n > -1) {
+        const tmp_num = loopGetNum(remove_duplicate);
+        result_num = tmp_num;
+        show = result_num;
+        re_gen = 1
+      } else {
+        show = '';
+        if (re_gen > 3){
+          const tmp_num = loopGetNum(remove_duplicate);
+          result_num = tmp_num;
+          show = result_num;
+          re_gen = 1
+        }
+      }
+    }
+    re_gen++
+
+    msg = msg + " งวดที่ " + (parseInt(n)+parseInt(key)) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show + "\r\n"
+  }  
+  const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
+
+  axios({
+    method: "post",
+    url: "https://notify-api.line.me/api/notify",
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Access-Control-Allow-Origin": "*",
+    },
+    data: querystring.stringify({
+      message: msg,
+    }),
+  })
+  .then(function (response) {
+    //console.log(response);
+  })
+  .catch(function (error) {
+    //console.log(error);
+  });
+  res.send(msg);
+  next();
 }

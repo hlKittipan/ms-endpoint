@@ -112,11 +112,6 @@ module.exports = (server) => {
     let guess = number_default[four] + number_default[five]
     let remove_duplicate = guess.replace(/(.)(?=.*\1)/g, "");
 
-    do {
-      numberAfterGenerate = generateNumber(remove_duplicate)
-      remove_duplicate = numberAfterGenerate.replace(/(.)(?=.*\1)/g, "");
-    } while ( remove_duplicate.length < 5)
-    
     // axios({
     //   method: "post",
     //   url: "https://notify-api.line.me/api/notify",
@@ -135,10 +130,9 @@ module.exports = (server) => {
     //   .catch(function (error) {
     //     //console.log(error);
     //   });
-    const result =  Lotto.findData(false, res, next, current_data);
-    console.log(result);
-    res.send({remove_duplicate});
-    next();
+    const result =  Lotto.findData(false, res, next, current_data, remove_duplicate);
+    // res.send(result);
+    // next();
   });
 };
 
@@ -161,16 +155,3 @@ cron.schedule("00 50 * * * *", function () {
   // Huay.getDataFromHuay()
   console.log(DateTime.local().toFormat("F"));
 });
-
-
-function generateNumber (number) {
-  guess_count = 5-parseInt(number.length)
-  for (i = 0; i < guess_count; i++) {
-    lastNum = (parseInt(number.slice(-1))+1)
-    if (lastNum == 10) {
-      lastNum = "0"
-    }
-    number = number+lastNum
-  }  
-  return number
-}
