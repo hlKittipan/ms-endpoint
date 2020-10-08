@@ -140,7 +140,7 @@ module.exports = (server) => {
 
   
   server.post("/webhooks", async(req, res, next) => {
-    const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
+    const token = "sxZX9ZftGr17P6Hrc7M4pBi67B3Q4yyBOEyciKrtVwu";
 
     axios({
       method: "post",
@@ -151,7 +151,7 @@ module.exports = (server) => {
         "Access-Control-Allow-Origin": "*",
       },
       data: querystring.stringify({
-        message: "new message",
+        message: "webhooks",
       }),
     })
       .then(function (response) {

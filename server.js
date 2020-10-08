@@ -52,6 +52,27 @@ server.get("/", async(req, res, next) => {
 });
 
 server.post("/webhook", async(req, res, next) => {
+    const token = "sxZX9ZftGr17P6Hrc7M4pBi67B3Q4yyBOEyciKrtVwu";
+
+    axios({
+      method: "post",
+      url: "https://notify-api.line.me/api/notify",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Access-Control-Allow-Origin": "*",
+      },
+      data: querystring.stringify({
+        message: "webhook",
+      }),
+    })
+      .then(function (response) {
+        //console.log(response);
+      })
+      .catch(function (error) {
+        //console.log(error);
+      });
+
     let reply_token = req.body.events[0].replyToken
     reply(reply_token)
     res.send(200);
