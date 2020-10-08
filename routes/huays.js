@@ -6,6 +6,8 @@ const config = require("../config");
 const { DateTime } = require("luxon");
 const axios = require("axios");
 const cron = require("node-cron");
+const querystring = require("querystring");
+
 
 const options = {
   url: "https://s1.huay.com/api/lottery/result",
@@ -138,10 +140,12 @@ module.exports = (server) => {
   
   server.post("/webhooks", async(req, res, next) => {
       
-    //let reply_token = req.body.events[0].replyToken
-    //let msg = req.body.events[0].message.text
-    //let id_group = req.body.events[0].source.groupId
-    //reply(reply_token, msg,id_group)
+    let reply_token = req.body.events[0].replyToken
+    let msg = req.body.events[0].message.text
+    let id_group = req.body.events[0].source.groupId
+    reply(reply_token, msg,id_group)
+    console.log(req.body);
+    const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
     axios({
       method: "post",
       url: "https://notify-api.line.me/api/notify",
@@ -151,7 +155,7 @@ module.exports = (server) => {
         "Access-Control-Allow-Origin": "*",
       },
       data: querystring.stringify({
-        message: req,
+        message: id_group,
       }),
     })
       .then(function (response) {
@@ -164,6 +168,27 @@ module.exports = (server) => {
   });
 
 };
+
+function reply(reply_token, msg, id_group) {
+  let headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer {Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=}'
+  }
+  let body = JSON.stringify({
+      replyToken: reply_token,
+      messages: [{
+          type: 'text',
+          text: msg+id_group
+      }]
+  })
+  request.post({
+      url: 'https://api.line.me/v2/bot/message/reply',
+      headers: headers,
+      body: body
+  }, (err, res, body) => {
+      console.log('status = ' + res.statusCode);
+  });
+}
 
 cron.schedule("00 5 * * * *", function () {
   // Huay.getDataFromHuay()
