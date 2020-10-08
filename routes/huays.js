@@ -139,13 +139,32 @@ module.exports = (server) => {
 
   
   server.post("/webhooks", async(req, res, next) => {
-      
+    const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
+
+    axios({
+      method: "post",
+      url: "https://notify-api.line.me/api/notify",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Access-Control-Allow-Origin": "*",
+      },
+      data: querystring.stringify({
+        message: "new message",
+      }),
+    })
+      .then(function (response) {
+        //console.log(response);
+      })
+      .catch(function (error) {
+        //console.log(error);
+      });
+
     let reply_token = req.body.events[0].replyToken
     let msg = req.body.events[0].message.text
     let id_group = req.body.events[0].source.groupId
     reply(reply_token, msg,id_group)
     console.log(req.body);
-    const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
     axios({
       method: "post",
       url: "https://notify-api.line.me/api/notify",
