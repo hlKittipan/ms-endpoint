@@ -82,11 +82,7 @@ function reply(reply_token) {
     messages: [
       {
         type: "text",
-        text: "Hello",
-      },
-      {
-        type: "text",
-        text: "How are you?",
+        text: "Please wait.",
       },
     ],
   });
