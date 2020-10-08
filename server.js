@@ -98,16 +98,16 @@ function reply(reply_token) {
       },
     ],
   });
-//   request.post(
-//     {
-//       url: "https://api.line.me/v2/bot/message/reply",
-//       headers: headers,
-//       body: body,
-//     },
-//     (err, res, body) => {
-//       console.log("status = " + res.statusCode);
-//     }
-//   );
+  //   request.post(
+  //     {
+  //       url: "https://api.line.me/v2/bot/message/reply",
+  //       headers: headers,
+  //       body: body,
+  //     },
+  //     (err, res, body) => {
+  //       console.log("status = " + res.statusCode);
+  //     }
+  //   );
   axios({
     method: "post",
     url: "https://api.line.me/v2/bot/message/reply",
@@ -122,6 +122,56 @@ function reply(reply_token) {
     });
 }
 
+server.post("/webhook-push", async (req, res, next) => {
+  const token =
+    "Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=";
+
+  axios({
+    method: "post",
+    url: "https://api.line.me/v2/bot/message/push",
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: req.body,
+  })
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      //console.log(error);
+    });
+  let headers = {
+    "Content-Type": "application/json",
+    Authorization:
+      "Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=",
+  };
+  let body = JSON.stringify(
+    JSON.stringify({
+      to: "U63a3a3722c5e501e9728b8ea4dcbb9a9",
+      // to: "C1e2a34222671bb93da7bbca980d86c18", //Group สูตร
+      messages: [
+        {
+          type: "text",
+          text: "What the fuck",
+        },
+      ],
+    })
+  );
+
+  request.post(
+    {
+      url: "https://api.line.me/v2/bot/message/push",
+      headers: headers,
+      body: body,
+    },
+    (err, res, body) => {
+      console.log("status = " + res.statusCode);
+    }
+  );
+  res.send(req.body);
+});
 // app.use(bodyParser.json());
 
 // const jwt = require("jwt-simple");

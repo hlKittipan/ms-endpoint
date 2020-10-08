@@ -8,6 +8,8 @@ const axios = require("axios");
 const cron = require("node-cron");
 const querystring = require("querystring");
 const { json } = require("body-parser");
+const request = require("request");
+
 
 
 const options = {
@@ -140,8 +142,9 @@ module.exports = (server) => {
 
   
   server.post("/webhooks", async(req, res, next) => {
-    const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
-    
+    // const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
+    const token = "sxZX9ZftGr17P6Hrc7M4pBi67B3Q4yyBOEyciKrtVwu";
+
     let reply_token = req.body.events[0].replyToken
     let msg = req.body.events[0].message.text
     let id_group = req.body.events[0].source.groupId
@@ -175,15 +178,18 @@ function reply(reply_token, msg, id_group) {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU='
   }
-  let body = JSON.stringify({
-      replyToken: reply_token,
-      messages: [{
-          type: 'text',
-          text: msg
-      }]
-  })
+  let body = JSON.stringify(JSON.stringify({
+    to: "U63a3a3722c5e501e9728b8ea4dcbb9a9",
+    // to: "C1e2a34222671bb93da7bbca980d86c18", //Group สูตร
+    messages: [{
+      type: "sticker",
+      packageId: 11537,
+      stickerId: 52002744
+    }]
+  }))
+
   request.post({
-      url: 'https://api.line.me/v2/bot/message/reply',
+      url: 'https://api.line.me/v2/bot/message/push',
       headers: headers,
       body: body
   }, (err, res, body) => {
