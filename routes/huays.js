@@ -176,7 +176,7 @@ module.exports = (server) => {
 function reply(reply_token, msg, id_group) {
   let headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU='
+      'Authorization': 'Bearer ' + config.LINE_BOT
   }
   let body = JSON.stringify(JSON.stringify({
     to: "U63a3a3722c5e501e9728b8ea4dcbb9a9",

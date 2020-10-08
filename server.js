@@ -101,16 +101,7 @@ function reply(reply_token) {
       },
     ],
   });
-  // request.post(
-  //   {
-  //     url: "https://api.line.me/v2/bot/message/reply",
-  //     headers: headers,
-  //     body: body,
-  //   },
-  //   (err, res, body) => {
-  //     console.log("status = " + res.statusCode);
-  //   }
-  // );
+  
   axios
     .post("https://api.line.me/v2/bot/message/reply", body, {
       headers: headers,
@@ -122,8 +113,6 @@ function reply(reply_token) {
       console.log(error.response.status);
     });
 
-  const token =
-    "Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=";
   let data = JSON.stringify(
     JSON.stringify({
       to: "U63a3a3722c5e501e9728b8ea4dcbb9a9",
@@ -131,9 +120,9 @@ function reply(reply_token) {
       messages: [
         {
           type: "text",
-          text: "What the fuck",
-        },
-      ],
+          text: "What the fuck"
+        }
+      ]
     })
   );
 
@@ -147,16 +136,7 @@ function reply(reply_token) {
     .catch(function (error) {
       console.log(error.response.status);
     });
-  request.post(
-    {
-      url: "https://api.line.me/v2/bot/message/push",
-      headers: headers,
-      body: data,
-    },
-    (err, res, body) => {
-      console.log("status = " + res.statusCode);
-    }
-  );
+ 
 }
 
 server.post("/webhook-push", async (req, res, next) => {
@@ -170,8 +150,8 @@ server.post("/webhook-push", async (req, res, next) => {
         {
           type: "text",
           text: "What the fuck",
-        },
-      ],
+        }
+      ]
     })
   );
   let headers = {
