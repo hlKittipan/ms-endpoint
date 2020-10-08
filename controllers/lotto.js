@@ -17,7 +17,7 @@ module.exports = {
         newLotto = createData(value, res, next, false, value._id, current_data, remove_duplicate, user_id);
       }
     });
-    console.log(newLotto)
+    //console.log(newLotto)
     
   },
 
@@ -159,7 +159,7 @@ async function  createData (req, res, next, isCreate, id, curent_data, remove_du
       //console.log(response);
     })
     .catch((err) => {
-      console.log(err.statusCode);
+      //console.log(err.statusCode);
     });
 
   res.send(msg);

@@ -117,7 +117,7 @@ module.exports = (server) => {
     var msg = one + two + three + four + five;
     let guess = number_default[four] + number_default[five]
     let remove_duplicate = guess.replace(/(.)(?=.*\1)/g, "");
-
+    
     // axios({
     //   method: "post",
     //   url: "https://notify-api.line.me/api/notify",

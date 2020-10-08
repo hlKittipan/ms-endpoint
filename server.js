@@ -55,7 +55,10 @@ server.post("/webhook", async (req, res, next) => {
   const token = "sxZX9ZftGr17P6Hrc7M4pBi67B3Q4yyBOEyciKrtVwu";
   let reply_token = req.body.events[0].replyToken;
   let msg = req.body.events[0].message.text;
-  let user_id = req.body.events[0].source.userId
+  let user_id = req.body.events[0].source.userId;
+  if (req.body.events[0].source.hasOwnProperty('groupId')){
+    user_id = req.body.events[0].source.groupId;
+  }
   if(msg.split(' ')[0] === 'bot'){
     axios
     .get("https://intense-reaches-16002.herokuapp.com/lotto/"+msg.split(' ')[1]+","+ user_id)
