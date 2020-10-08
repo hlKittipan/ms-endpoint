@@ -75,7 +75,10 @@ server.post("/webhook", async (req, res, next) => {
   //   });
 
   let reply_token = req.body.events[0].replyToken;
-  reply(reply_token);
+  let msg = req.body.events[0].message.text;
+  if (msg == "Bot") {
+    reply(reply_token);
+  }
   res.send(200);
 });
 
@@ -98,16 +101,16 @@ function reply(reply_token) {
       },
     ],
   });
-  //   request.post(
-  //     {
-  //       url: "https://api.line.me/v2/bot/message/reply",
-  //       headers: headers,
-  //       body: body,
-  //     },
-  //     (err, res, body) => {
-  //       console.log("status = " + res.statusCode);
-  //     }
-  //   );
+  request.post(
+    {
+      url: "https://api.line.me/v2/bot/message/reply",
+      headers: headers,
+      body: body,
+    },
+    (err, res, body) => {
+      console.log("status = " + res.statusCode);
+    }
+  );
   axios({
     method: "post",
     url: "https://api.line.me/v2/bot/message/reply",
