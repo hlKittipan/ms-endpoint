@@ -128,29 +128,7 @@ function reply(reply_token) {
 server.post("/webhook-push", async (req, res, next) => {
   const token =
     "Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=";
-
-  axios({
-    method: "post",
-    url: "https://api.line.me/v2/bot/message/push",
-    headers: {
-      Authorization: "Bearer " + token,
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: req.body,
-  })
-    .then(function (response) {
-      //console.log(response);
-    })
-    .catch(function (error) {
-      //console.log(error);
-    });
-  let headers = {
-    "Content-Type": "application/json",
-    Authorization:
-      "Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=",
-  };
-  let body = JSON.stringify(
+  let data = JSON.stringify(
     JSON.stringify({
       to: "U63a3a3722c5e501e9728b8ea4dcbb9a9",
       // to: "C1e2a34222671bb93da7bbca980d86c18", //Group สูตร
@@ -162,18 +140,38 @@ server.post("/webhook-push", async (req, res, next) => {
       ],
     })
   );
-
-  request.post(
-    {
-      url: "https://api.line.me/v2/bot/message/push",
+  let headers = {
+    "Content-Type": "application/json",
+    Authorization: "Bearer " + token,
+  };
+  // axios({
+  //   method: "post",
+  //   url: "https://api.line.me/v2/bot/message/push",
+  //   headers: headers,
+  //   body: data,
+  // })
+  axios
+    .post("https://api.line.me/v2/bot/message/push", data, {
       headers: headers,
-      body: body,
-    },
-    (err, res, body) => {
-      console.log("status = " + res.statusCode);
-    }
-  );
-  res.send(req.body);
+    })
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error.response.status);
+    });
+
+  // request.post(
+  //   {
+  //     url: "https://api.line.me/v2/bot/message/push",
+  //     headers: headers,
+  //     body: data,
+  //   },
+  //   (err, res, body) => {
+  //     console.log("status = " + res.statusCode);
+  //   }
+  // );
+  res.send(200);
 });
 // app.use(bodyParser.json());
 
