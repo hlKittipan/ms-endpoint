@@ -101,28 +101,27 @@ function reply(reply_token) {
       },
     ],
   });
-  request.post(
-    {
-      url: "https://api.line.me/v2/bot/message/reply",
+  // request.post(
+  //   {
+  //     url: "https://api.line.me/v2/bot/message/reply",
+  //     headers: headers,
+  //     body: body,
+  //   },
+  //   (err, res, body) => {
+  //     console.log("status = " + res.statusCode);
+  //   }
+  // );
+  axios
+    .post("https://api.line.me/v2/bot/message/reply", body, {
       headers: headers,
-      body: body,
-    },
-    (err, res, body) => {
-      console.log("status = " + res.statusCode);
-    }
-  );
-  axios({
-    method: "post",
-    url: "https://api.line.me/v2/bot/message/reply",
-    headers: headers,
-    data: body,
-  })
+    })
     .then(function (response) {
-      // console.log(response);
+      //console.log(response);
     })
     .catch(function (error) {
-      // console.log(error);
+      console.log(error.response.status);
     });
+
   const token =
     "Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=";
   let data = JSON.stringify(
