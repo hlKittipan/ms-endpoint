@@ -58,7 +58,7 @@ server.post("/webhook", async (req, res, next) => {
   let user_id = req.body.events[0].source.userId
   if(msg.split(' ')[0] === 'bot'){
     axios
-    .get("https://intense-reaches-16002.herokuapp.com/lotto/"+msg[1]+","+ user_id)
+    .get("https://intense-reaches-16002.herokuapp.com/lotto/"+msg.split(' ')[1]+","+ user_id)
     .then(function (response) {
       //console.log(response);
     })
@@ -82,7 +82,7 @@ function reply(reply_token,user_id) {
     messages: [
       {
         type: "text",
-        text: "Please wait." +user_id,
+        text: "Please wait.",
       },
     ],
   });
