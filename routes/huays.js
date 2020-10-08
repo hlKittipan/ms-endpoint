@@ -100,7 +100,7 @@ module.exports = (server) => {
   });
 
   server.get("/lotto/:id", async (req, res, next) => {
-    let getReq = [req.params.id]
+    let getReq = req.params.id.split(",")
     const id = getReq[0];
     const one = id.toString().substr(0, 1);
     const two = id.toString().substr(1, 1);

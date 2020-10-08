@@ -12,9 +12,9 @@ module.exports = {
     let newLotto = ''
     const lotto = await Lotto.findOne({ date: date }).then(function (value) {
       if (value == null) {
-        newLotto = createData(req, res, next, true , 0, current_data, remove_duplicate,user_id);
+        newLotto = createData(req, res, next, true , 0, current_data, remove_duplicate, user_id);
       }else {
-        newLotto = createData(value, res, next, false, value._id, current_data, remove_duplicate,user_id);
+        newLotto = createData(value, res, next, false, value._id, current_data, remove_duplicate, user_id);
       }
     });
     console.log(newLotto)
@@ -140,24 +140,26 @@ async function  createData (req, res, next, isCreate, id, curent_data, remove_du
       }
     }
     re_gen++
-
-    msg = msg + " งวดที่ " + (parseInt(n)+parseInt(key)) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show + "\r\n"
+    if (show != '') {
+      msg = msg + " งวดที่ " + (parseInt(n)+parseInt(key)) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show + "\r\n"
+    }
   }  
   const client = new line.Client({
     channelAccessToken: config.LINE_BOT,
   });
-  const message = {
-    type: "text",
-    text: msg,
-  };
-
+  const message = [
+    {
+      type: "text",
+      text: msg,
+    }
+  ];
   client
     .pushMessage(user_id, message)
     .then((response) => {
       //console.log(response);
     })
     .catch((err) => {
-      console.log(err.response.status);
+      console.log(err.statusCode);
     });
 
   res.send(msg);
