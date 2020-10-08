@@ -65,13 +65,13 @@ server.post("/webhook", async (req, res, next) => {
     .catch(function (error) {
       console.log(error.response.status);
     });
-    reply(reply_token);
+    reply(reply_token,user_id);
   }
 
   res.send(200);
 });
 
-function reply(reply_token) {
+function reply(reply_token,user_id) {
   let headers = {
     "Content-Type": "application/json",
     Authorization:
@@ -82,7 +82,7 @@ function reply(reply_token) {
     messages: [
       {
         type: "text",
-        text: "Please wait.",
+        text: "Please wait." +user_id,
       },
     ],
   });
