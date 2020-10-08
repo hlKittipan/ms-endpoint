@@ -63,7 +63,7 @@ server.post("/webhook", async(req, res, next) => {
         "Access-Control-Allow-Origin": "*",
       },
       data: querystring.stringify({
-        message: "webhook",
+        message: JSON.stringify(req.body),
       }),
     })
       .then(function (response) {

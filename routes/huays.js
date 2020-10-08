@@ -140,7 +140,7 @@ module.exports = (server) => {
 
   
   server.post("/webhooks", async(req, res, next) => {
-    const token = "sxZX9ZftGr17P6Hrc7M4pBi67B3Q4yyBOEyciKrtVwu";
+    const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
 
     axios({
       method: "post",
