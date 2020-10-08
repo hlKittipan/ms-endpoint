@@ -8,6 +8,7 @@ const config = require("./config");
 const rjwt = require("restify-jwt-community");
 const axios = require("axios");
 const querystring = require("querystring");
+const request = require("request");
 
 const server = restify.createServer();
 
@@ -18,21 +19,21 @@ server.use(restify.plugins.bodyParser());
 //server.use(rjwt({ secret: config.JWT_SERCRET}).unless({ path: ['/auth']}));
 
 server.listen(config.PORT, () => {
-    mongoose.set("useFindAndModify", false);
-    mongoose
-        .connect(config.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        })
-        .then(
-            () => {
-                console.log("[success] task  : connected to the database ");
-            },
-            (error) => {
-                console.log("[failed] task  " + error);
-                process.exit();
-            }
-        );
+  mongoose.set("useFindAndModify", false);
+  mongoose
+    .connect(config.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(
+      () => {
+        console.log("[success] task  : connected to the database ");
+      },
+      (error) => {
+        console.log("[failed] task  " + error);
+        process.exit();
+      }
+    );
 });
 
 const db = mongoose.connection;
@@ -40,66 +41,102 @@ const db = mongoose.connection;
 db.on("error", (err) => console.log(err));
 
 db.once("open", () => {
-    require("./routes/customers")(server);
-    require("./routes/users")(server);
-    require("./routes/huays")(server);
-    console.log("Server started on port " + config.PORT);
+  require("./routes/customers")(server);
+  require("./routes/users")(server);
+  require("./routes/huays")(server);
+  console.log("Server started on port " + config.PORT);
 });
 
 // test
-server.get("/", async(req, res, next) => {
-    res.send('Hello world'+ Date.now());
+server.get("/", async (req, res, next) => {
+  res.send("Hello world" + Date.now());
 });
 
-server.post("/webhook", async(req, res, next) => {
-    const token = "sxZX9ZftGr17P6Hrc7M4pBi67B3Q4yyBOEyciKrtVwu";
+server.post("/webhook", async (req, res, next) => {
+  const token = "sxZX9ZftGr17P6Hrc7M4pBi67B3Q4yyBOEyciKrtVwu";
 
-    axios({
-      method: "post",
-      url: "https://notify-api.line.me/api/notify",
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Access-Control-Allow-Origin": "*",
-      },
-      data: querystring.stringify({
-        message: JSON.stringify(req.body),
-      }),
-    })
-      .then(function (response) {
-        //console.log(response);
-      })
-      .catch(function (error) {
-        //console.log(error);
-      });
+  // axios({
+  //   method: "post",
+  //   url: "https://notify-api.line.me/api/notify",
+  //   headers: {
+  //     Authorization: "Bearer " + token,
+  //     "Content-Type": "application/x-www-form-urlencoded",
+  //     "Access-Control-Allow-Origin": "*",
+  //   },
+  //   data: querystring.stringify({
+  //     message: JSON.stringify(req.body),
+  //   }),
+  // })
+  //   .then(function (response) {
+  //     //console.log(response);
+  //   })
+  //   .catch(function (error) {
+  //     //console.log(error);
+  //   });
 
-    let reply_token = req.body.events[0].replyToken
-    reply(reply_token)
-    res.send(200);
+  let reply_token = req.body.events[0].replyToken;
+  reply(reply_token);
+  res.send(200);
 });
 
 function reply(reply_token) {
-    let headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU='
+  let headers = {
+    "Content-Type": "application/json",
+    Authorization:
+      "Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=",
+  };
+  let body = JSON.stringify({
+    replyToken: reply_token,
+    messages: [
+      {
+        type: "text",
+        text: "Hello",
+      },
+      {
+        type: "text",
+        text: "How are you?",
+      },
+    ],
+  });
+  request.post(
+    {
+      url: "https://api.line.me/v2/bot/message/reply",
+      headers: headers,
+      body: body,
+    },
+    (err, res, body) => {
+      console.log("status = " + res.statusCode);
     }
-    let body = JSON.stringify({
-        replyToken: reply_token,
-        messages: [{
-            type: 'text',
-            text: 'Hello'
-        },
-        {
-            type: 'text',
-            text: 'How are you?'
-        }]
+  );
+  axios({
+    method: "post",
+    url: "https://api.line.me/v2/bot/message/reply",
+    headers: headers,
+    body: body,
+  })
+    .then(function (response) {
+      // console.log(response);
     })
-    request.post({
-        url: 'https://api.line.me/v2/bot/message/reply',
-        headers: headers,
-        body: body
-    }, (err, res, body) => {
-        console.log('status = ' + res.statusCode);
+    .catch(function (error) {
+      // console.log(error);
+    });
+  axios({
+    method: "post",
+    url: "https://notify-api.line.me/api/notify",
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Access-Control-Allow-Origin": "*",
+    },
+    data: querystring.stringify({
+      message: JSON.stringify(req.body),
+    }),
+  })
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      //console.log(error);
     });
 }
 

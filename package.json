@@ -32,6 +32,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "querystring": "^0.2.0",
+    "request": "^2.88.2",
     "restify": "^8.5.1",
     "restify-errors": "^8.0.2",
     "restify-jwt-community": "^1.1.5"
