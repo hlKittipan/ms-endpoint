@@ -112,7 +112,7 @@ function reply(reply_token) {
     method: "post",
     url: "https://api.line.me/v2/bot/message/reply",
     headers: headers,
-    body: body,
+    data: body,
   })
     .then(function (response) {
       // console.log(response);
