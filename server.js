@@ -98,16 +98,16 @@ function reply(reply_token) {
       },
     ],
   });
-  request.post(
-    {
-      url: "https://api.line.me/v2/bot/message/reply",
-      headers: headers,
-      body: body,
-    },
-    (err, res, body) => {
-      console.log("status = " + res.statusCode);
-    }
-  );
+//   request.post(
+//     {
+//       url: "https://api.line.me/v2/bot/message/reply",
+//       headers: headers,
+//       body: body,
+//     },
+//     (err, res, body) => {
+//       console.log("status = " + res.statusCode);
+//     }
+//   );
   axios({
     method: "post",
     url: "https://api.line.me/v2/bot/message/reply",
@@ -119,24 +119,6 @@ function reply(reply_token) {
     })
     .catch(function (error) {
       // console.log(error);
-    });
-  axios({
-    method: "post",
-    url: "https://notify-api.line.me/api/notify",
-    headers: {
-      Authorization: "Bearer " + token,
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Access-Control-Allow-Origin": "*",
-    },
-    data: querystring.stringify({
-      message: JSON.stringify(req.body),
-    }),
-  })
-    .then(function (response) {
-      //console.log(response);
-    })
-    .catch(function (error) {
-      //console.log(error);
     });
 }
 
