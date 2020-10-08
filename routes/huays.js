@@ -7,6 +7,7 @@ const { DateTime } = require("luxon");
 const axios = require("axios");
 const cron = require("node-cron");
 const querystring = require("querystring");
+const { json } = require("body-parser");
 
 
 const options = {
@@ -174,7 +175,7 @@ module.exports = (server) => {
         "Access-Control-Allow-Origin": "*",
       },
       data: querystring.stringify({
-        message: id_group,
+        message: JSON.stringify(req.body),
       }),
     })
       .then(function (response) {
