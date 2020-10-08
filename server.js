@@ -148,6 +148,16 @@ function reply(reply_token) {
     .catch(function (error) {
       console.log(error.response.status);
     });
+  request.post(
+    {
+      url: "https://api.line.me/v2/bot/message/push",
+      headers: headers,
+      body: data,
+    },
+    (err, res, body) => {
+      console.log("status = " + res.statusCode);
+    }
+  );
 }
 
 server.post("/webhook-push", async (req, res, next) => {
@@ -185,17 +195,6 @@ server.post("/webhook-push", async (req, res, next) => {
     .catch(function (error) {
       console.log(error.response.status);
     });
-
-  // request.post(
-  //   {
-  //     url: "https://api.line.me/v2/bot/message/push",
-  //     headers: headers,
-  //     body: data,
-  //   },
-  //   (err, res, body) => {
-  //     console.log("status = " + res.statusCode);
-  //   }
-  // );
   res.send(200);
 });
 // app.use(bodyParser.json());
