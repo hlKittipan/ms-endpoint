@@ -82,7 +82,7 @@ function reply(reply_token,user_id) {
     messages: [
       {
         type: "text",
-        text: "Please wait.",
+        text: "Please wait." +user_id,
       },
     ],
   });
