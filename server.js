@@ -79,7 +79,7 @@ server.post("/webhook", async (req, res, next) => {
   }
 
   if (msg === "all") {
-    getAll(replyToken);
+    getAll(reply_token);
   }
 
   res.send(200);
