@@ -115,13 +115,14 @@ function reply(reply_token, user_id) {
       console.log(error.response.status);
     });
 }
+const Lotto = require("./models/lotto");
 
 async function getAll(reply_token) {
  
   let result = ""
   const lotto = await Lotto.findOne({ date: date }).then(function (value) {
     for (const key in value.yeekee) {
-      result = result + (parseInt(key)+1) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + "\r\n"
+      result = result + (parseInt(key)+1) + " : " + value.yeekee[key].three_top + "-" + value.yeekee[key].two_under + "\r\n"
     }
   });
   
