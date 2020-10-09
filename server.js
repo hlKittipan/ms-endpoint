@@ -8,6 +8,8 @@ const config = require("./config");
 const rjwt = require("restify-jwt-community");
 const axios = require("axios");
 const querystring = require("querystring");
+const { DateTime } = require("luxon");
+
 
 const server = restify.createServer();
 
@@ -56,36 +58,48 @@ server.post("/webhook", async (req, res, next) => {
   let reply_token = req.body.events[0].replyToken;
   let msg = req.body.events[0].message.text;
   let user_id = req.body.events[0].source.userId;
-  if (req.body.events[0].source.hasOwnProperty('groupId')){
+  if (req.body.events[0].source.hasOwnProperty("groupId")) {
     user_id = req.body.events[0].source.groupId;
   }
-  if(msg.split(' ')[0] === 'bot'){
+  if (msg.split(" ")[0] === "bot") {
     axios
-    .get("https://intense-reaches-16002.herokuapp.com/lotto/"+msg.split(' ')[1]+","+ user_id)
-    .then(function (response) {
-      //console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error.response.status);
-    });
-    reply(reply_token,user_id);
+      .get(
+        "https://intense-reaches-16002.herokuapp.com/lotto/" +
+          msg.split(" ")[1] +
+          "," +
+          user_id
+      )
+      .then(function (response) {
+        //console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error.response.status);
+      });
+    reply(reply_token, user_id);
+  }
+
+  if (msg === "all") {
+    getAll(replyToken);
   }
 
   res.send(200);
 });
 
-function reply(reply_token,user_id) {
-  let headers = {
-    "Content-Type": "application/json",
-    Authorization:
-      "Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=",
-  };
+const headers = {
+  "Content-Type": "application/json",
+  Authorization:
+    "Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=",
+};
+const date = DateTime.local().toFormat("dd/LL/yyyy");
+
+
+function reply(reply_token, user_id) {
   let body = JSON.stringify({
     replyToken: reply_token,
     messages: [
       {
         type: "text",
-        text: "Please wait." +user_id,
+        text: "Please wait." + user_id,
       },
     ],
   });
@@ -102,33 +116,27 @@ function reply(reply_token,user_id) {
     });
 }
 
-server.post("/webhook-push", async (req, res, next) => {
-  const token =
-    "Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=";
-  let data = JSON.stringify(
-    JSON.stringify({
-      to: "U63a3a3722c5e501e9728b8ea4dcbb9a9",
-      // to: "C1e2a34222671bb93da7bbca980d86c18", //Group สูตร
-      messages: [
-        {
-          type: "text",
-          text: "What the fuck",
-        },
-      ],
-    })
-  );
-  let headers = {
-    "Content-Type": "application/json",
-    Authorization: "Bearer " + token,
-  };
-  // axios({
-  //   method: "post",
-  //   url: "https://api.line.me/v2/bot/message/push",
-  //   headers: headers,
-  //   body: data,
-  // })
+async function getAll(reply_token) {
+ 
+  let result = ""
+  const lotto = await Lotto.findOne({ date: date }).then(function (value) {
+    for (const key in value.yeekee) {
+      result = result + (parseInt(key)+1) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + "\r\n"
+    }
+  });
+  
+  const body = JSON.stringify({
+    replyToken: reply_token,
+    messages: [
+      {
+        type: "text",
+        text: result,
+      },
+    ],
+  });
+
   axios
-    .post("https://api.line.me/v2/bot/message/push", data, {
+    .post("https://api.line.me/v2/bot/message/reply", body, {
       headers: headers,
     })
     .then(function (response) {
@@ -137,8 +145,8 @@ server.post("/webhook-push", async (req, res, next) => {
     .catch(function (error) {
       console.log(error.response.status);
     });
-  res.send(200);
-});
+}
+
 // app.use(bodyParser.json());
 
 // const jwt = require("jwt-simple");
