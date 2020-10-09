@@ -125,7 +125,7 @@ async function  createData (req, res, next, isCreate, id, curent_data, remove_du
     } else {
       let n = result_num.indexOf(two);
       if ( n > -1) {
-        msg = msg + "//" + re_gen
+        msg = msg + "//" + (parseInt(re_gen)-1)
         const tmp_num = loopGetNum(remove_duplicate);
         result_num = tmp_num;
         show = result_num;
