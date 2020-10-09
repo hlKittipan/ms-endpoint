@@ -125,13 +125,15 @@ async function  createData (req, res, next, isCreate, id, curent_data, remove_du
     } else {
       let n = result_num.indexOf(two);
       if ( n > -1) {
+        msg = msg + "//" + re_gen
         const tmp_num = loopGetNum(remove_duplicate);
         result_num = tmp_num;
         show = result_num;
         re_gen = 1
       } else {
         show = '';
-        if (re_gen > 3){
+        if (re_gen > 4){
+          msg = msg + "//END"
           const tmp_num = loopGetNum(remove_duplicate);
           result_num = tmp_num;
           show = result_num;
@@ -141,7 +143,7 @@ async function  createData (req, res, next, isCreate, id, curent_data, remove_du
     }
     re_gen++
     if (show != '') {
-      msg = msg + " งวดที่ " + (parseInt(n)+parseInt(key)) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show + "\r\n"
+      msg = msg + "\r\n" + " งวดที่ " + (parseInt(n)+parseInt(key)) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show 
     }
   }  
   const client = new line.Client({
