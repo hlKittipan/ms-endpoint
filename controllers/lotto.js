@@ -143,7 +143,7 @@ async function  createData (req, res, next, isCreate, id, curent_data, remove_du
     }
     re_gen++
     if (show != '') {
-      msg = msg + "\r\n" + " งวดที่ " + (parseInt(n)+parseInt(key)) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show 
+      msg = msg + "\r\n" + (parseInt(n)+parseInt(key)) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show 
     }
   }  
   const client = new line.Client({
