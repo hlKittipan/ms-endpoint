@@ -119,7 +119,7 @@ function reply(reply_token, user_id, msg, key) {
       break;
     case "REMOVE":
       removeLottoByKey(key, reply_token)
-      ref_text = "REMOVE success."
+      ref_text = "Remove success."
       break;
     default:
       text = "Please wait.";
@@ -194,6 +194,12 @@ async function removeLottoByKey(ref_key, reply_token) {
       }
     }
   });
+  const filter = { _id: id };
+  const update = { date: date ,yeekee : new_yeekee };
+  //console.log(update)
+  await Lotto.findOneAndUpdate(filter, update, {
+    returnOriginal: false
+  }).then(function (value) {getAll(reply_token)});
 }
 
 // app.use(bodyParser.json());
