@@ -61,7 +61,18 @@ server.post("/webhook", async (req, res, next) => {
   if (req.body.events[0].source.hasOwnProperty("groupId")) {
     user_id = req.body.events[0].source.groupId;
   }
-  if (msg.split(" ")[0] === "bot") {
+  let check_case = msg.split(" ")[0]
+  check_case = check_case.toUpperCase();
+
+  if ( check_case === "HI" || check_case === "WAKE UP" ) {
+    reply(reply_token, user_id, check_case, '');
+  }
+
+  if ( check_case === "REMOVE" ) {
+    reply(reply_token, user_id, check_case, msg.split(" ")[1]);
+  }
+
+  if ( check_case === "ADD") {
     axios
       .get(
         "https://intense-reaches-16002.herokuapp.com/lotto/" +
@@ -75,10 +86,10 @@ server.post("/webhook", async (req, res, next) => {
       .catch(function (error) {
         console.log(error.response.status);
       });
-    reply(reply_token, user_id);
+    reply(reply_token, user_id, check_case, '');
   }
 
-  if (msg === "all") {
+  if (check_case === "ALL") {
     getAll(reply_token);
   }
 
@@ -93,13 +104,33 @@ const headers = {
 const date = DateTime.local().toFormat("dd/LL/yyyy");
 
 
-function reply(reply_token, user_id) {
+function reply(reply_token, user_id, msg, key) {
+
+  let ref_text = "Please wait."
+ 
+  switch (msg) {
+    case "HI":
+    case "WAKE UP":
+      ref_text = "What's up.";
+      break;
+    case "RESET":
+      removeLotto()
+      ref_text = "Reset success."
+      break;
+    case "REMOVE":
+      removeLottoByKey(key, reply_token)
+      ref_text = "REMOVE success."
+      break;
+    default:
+      text = "Please wait.";
+  }
+
   let body = JSON.stringify({
     replyToken: reply_token,
     messages: [
       {
         type: "text",
-        text: "Please wait." + user_id,
+        text: ref_text,
       },
     ],
   });
@@ -115,6 +146,8 @@ function reply(reply_token, user_id) {
       console.log(error.response.status);
     });
 }
+
+
 const Lotto = require("./models/lotto");
 
 async function getAll(reply_token) {
@@ -146,6 +179,21 @@ async function getAll(reply_token) {
     .catch(function (error) {
       console.log(error.response.status);
     });
+}
+
+async function removeLotto() {
+  const lotto = await Lotto.findOneAndDelete({ date: date })
+}
+
+async function removeLottoByKey(ref_key, reply_token) {
+  let new_yeekee = []
+  const lotto = await Lotto.findOne({ date: date }).then(function (value) {
+    for (const key in value.yeekee) {
+      if ( (parseInt(key)+1) != ref_key ) {
+        new_yeekee.push(value.yeekee[key])
+      }
+    }
+  });
 }
 
 // app.use(bodyParser.json());
