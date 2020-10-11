@@ -63,13 +63,22 @@ server.post("/webhook", async (req, res, next) => {
   }
   let check_case = msg.split(" ")[0]
   check_case = check_case.toUpperCase();
-
-  if ( check_case === "HI" || check_case === "WAKE UP" ) {
-    reply(reply_token, user_id, check_case, '');
-  }
-
-  if ( check_case === "REMOVE" ) {
-    reply(reply_token, user_id, check_case, msg.split(" ")[1]);
+ 
+  switch (check_case) {
+    case "HI":
+      reply(reply_token, user_id, "What's up.");
+      break;
+    case "RESET":
+      removeLotto()
+      reply(reply_token, user_id, "Reset success.");
+      break;
+    case "REMOVE":
+      removeLottoByKey( msg.split(" ")[1], reply_token)
+      reply(reply_token, user_id, "Remove success.");
+      break;
+    case "ALL":
+      getAll(reply_token);
+      break;
   }
 
   if ( check_case === "ADD") {
@@ -86,11 +95,7 @@ server.post("/webhook", async (req, res, next) => {
       .catch(function (error) {
         console.log(error.response.status);
       });
-    reply(reply_token, user_id, check_case, '');
-  }
-
-  if (check_case === "ALL") {
-    getAll(reply_token);
+    reply(reply_token, user_id, "Please wait.");
   }
 
   res.send(200);
@@ -104,33 +109,14 @@ const headers = {
 const date = DateTime.local().toFormat("dd/LL/yyyy");
 
 
-function reply(reply_token, user_id, msg, key) {
-
-  let ref_text = "Please wait."
- 
-  switch (msg) {
-    case "HI":
-    case "WAKE UP":
-      ref_text = "What's up.";
-      break;
-    case "RESET":
-      removeLotto()
-      ref_text = "Reset success."
-      break;
-    case "REMOVE":
-      removeLottoByKey(key, reply_token)
-      ref_text = "Remove success."
-      break;
-    default:
-      text = "Please wait.";
-  }
+function reply(reply_token, user_id, msg) {
 
   let body = JSON.stringify({
     replyToken: reply_token,
     messages: [
       {
         type: "text",
-        text: ref_text,
+        text: msg,
       },
     ],
   });
@@ -187,7 +173,9 @@ async function removeLotto() {
 
 async function removeLottoByKey(ref_key, reply_token) {
   let new_yeekee = []
+  let id = ""
   const lotto = await Lotto.findOne({ date: date }).then(function (value) {
+    id = value._id;
     for (const key in value.yeekee) {
       if ( (parseInt(key)+1) != ref_key ) {
         new_yeekee.push(value.yeekee[key])
