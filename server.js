@@ -84,7 +84,7 @@ server.post("/webhook", async (req, res, next) => {
   if ( check_case === "ADD") {
     axios
       .get(
-        "https://intense-reaches-16002.herokuapp.com/lotto/" +
+        "https://line-bot-my-ks.herokuapp.com/lotto/" +
           msg.split(" ")[1] + "," + user_id
       )
       .then(function (response) {
