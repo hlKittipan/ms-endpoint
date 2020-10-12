@@ -93,7 +93,7 @@ server.post("/webhook", async (req, res, next) => {
       .catch(function (error) {
         console.log(error.response.status);
       });
-    reply(reply_token, user_id, "Please wait.");
+    //reply(reply_token, user_id, "Please wait.");
   }
 
   res.send(200);
