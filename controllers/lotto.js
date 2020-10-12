@@ -12,9 +12,9 @@ module.exports = {
     let newLotto = ''
     const lotto = await Lotto.findOne({ date: date }).then(function (value) {
       if (value == null) {
-        newLotto = createData(req, res, next, true , 0, current_data, remove_duplicate, user_id);
+        newLotto = createData(req, res, next, true , 0, current_data, user_id);
       }else {
-        newLotto = createData(value, res, next, false, value._id, current_data, remove_duplicate, user_id);
+        newLotto = createData(value, res, next, false, value._id, current_data, user_id);
       }
     });
     //console.log(newLotto)
@@ -73,7 +73,7 @@ function loopGetNum (number) {
   return number
 }
 
-async function  createData (req, res, next, isCreate, id, curent_data, remove_duplicate, user_id) {
+async function  createData (req, res, next, isCreate, id, curent_data, user_id) {
   const data = req != false ? req.yeekee : false ;
   const yeekee = [];
   let last_key = 0

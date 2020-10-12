@@ -85,9 +85,7 @@ server.post("/webhook", async (req, res, next) => {
     axios
       .get(
         "https://intense-reaches-16002.herokuapp.com/lotto/" +
-          msg.split(" ")[1] +
-          "," +
-          user_id
+          msg.split(" ")[1] + "," + user_id
       )
       .then(function (response) {
         //console.log(response);

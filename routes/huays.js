@@ -107,36 +107,14 @@ module.exports = (server) => {
     const three = id.toString().substr(2, 1);
     const four = id.toString().substr(3, 1);
     const five = id.toString().substr(4, 1);
-    const number_default = ["12", "627", "230", "245", "326", "370", "079", "802", "562", "68"];
     const current_data = { 
       "three_top" : one + two + three,
       "two_top" : two + three,
       "two_under" : four + five
     }
     const token = "pUcyPPJaouiRpluVhIKIwoV1mcC1qkuLLJueaR6m6cm";
-    var msg = one + two + three + four + five;
-    let guess = number_default[four] + number_default[five]
-    let remove_duplicate = guess.replace(/(.)(?=.*\1)/g, "");
     
-    // axios({
-    //   method: "post",
-    //   url: "https://notify-api.line.me/api/notify",
-    //   headers: {
-    //     Authorization: "Bearer " + token,
-    //     "Content-Type": "application/x-www-form-urlencoded",
-    //     "Access-Control-Allow-Origin": "*",
-    //   },
-    //   data: querystring.stringify({
-    //     message: msg,
-    //   }),
-    // })
-    //   .then(function (response) {
-    //     //console.log(response);
-    //   })
-    //   .catch(function (error) {
-    //     //console.log(error);
-    //   });
-    const result =  Lotto.findData(false, res, next, current_data, remove_duplicate, getReq[1]);
+    const result =  Lotto.findData(false, res, next, current_data, getReq[1]);
     // res.send(result);
     // next();
   });
