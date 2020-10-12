@@ -146,23 +146,50 @@ async function  createData (req, res, next, isCreate, id, curent_data, user_id) 
       msg = msg + "\r\n" + (parseInt(n)+parseInt(key)) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show 
     }
   }  
-  const client = new line.Client({
-    channelAccessToken: config.LINE_BOT,
-  });
-  const message = [
-    {
-      type: "text",
-      text: msg,
-    }
-  ];
-  client
-    .pushMessage(user_id, message)
-    .then((response) => {
-      //console.log(response);
-    })
-    .catch((err) => {
-      //console.log(err.statusCode);
+
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization:
+      "Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=",
+  };
+  const body = JSON.stringify({
+      replyToken: user_id,
+      messages: [
+        {
+          type: "text",
+          text: msg,
+        },
+      ],
     });
+  
+    axios
+      .post("https://api.line.me/v2/bot/message/reply", body, {
+        headers: headers,
+      })
+      .then(function (response) {
+        //console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error.response.status);
+      });
+      
+  // const client = new line.Client({
+  //   channelAccessToken: config.LINE_BOT,
+  // });
+  // const message = [
+  //   {
+  //     type: "text",
+  //     text: msg,
+  //   }
+  // ];
+  // client
+  //   .pushMessage(user_id, message)
+  //   .then((response) => {
+  //     console.log(response);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err.statusCode);
+  //   });
 
   res.send(msg);
   next();

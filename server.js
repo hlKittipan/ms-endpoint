@@ -85,7 +85,7 @@ server.post("/webhook", async (req, res, next) => {
     axios
       .get(
         "https://line-bot-my-ks.herokuapp.com/lotto/" +
-          msg.split(" ")[1] + "," + user_id
+          msg.split(" ")[1] + "," + reply_token
       )
       .then(function (response) {
         //console.log(response);
