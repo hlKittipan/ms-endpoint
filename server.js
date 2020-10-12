@@ -89,11 +89,11 @@ server.post("/webhook", async (req, res, next) => {
       )
       .then(function (response) {
         //console.log(response);
+        reply(reply_token, user_id, response);
       })
       .catch(function (error) {
         console.log(error.response.status);
       });
-    //reply(reply_token, user_id, "Please wait.");
   }
 
   res.send(200);
