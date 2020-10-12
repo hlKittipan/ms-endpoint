@@ -88,8 +88,8 @@ server.post("/webhook", async (req, res, next) => {
           msg.split(" ")[1] + "," + reply_token
       )
       .then(function (response) {
-        //console.log(response);
-        reply(reply_token, user_id, response);
+        console.log(response.data);
+        reply(reply_token, user_id, response.data);
       })
       .catch(function (error) {
         console.log(error.response.status);
