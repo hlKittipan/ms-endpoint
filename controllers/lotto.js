@@ -7,18 +7,15 @@ const config = require("../config");
 
 const date = DateTime.local().toFormat("dd/LL/yyyy");
 module.exports = {
-
   findData: async (req, res, next, current_data, remove_duplicate, user_id) => {
-    let newLotto = ''
+    let newLotto = "";
     const lotto = await Lotto.findOne({ date: date }).then(function (value) {
       if (value == null) {
-        newLotto = createData(req, res, next, true , 0, current_data, user_id);
-      }else {
+        newLotto = createData(req, res, next, true, 0, current_data, user_id);
+      } else {
         newLotto = createData(value, res, next, false, value._id, current_data, user_id);
       }
     });
-    //console.log(newLotto)
-    
   },
 
   getDataFromLotto: () => {
@@ -26,7 +23,7 @@ module.exports = {
       method: "get",
       url: "https://s1.huay.com/api/lottery/result",
       data: {
-        date: DateTime.local().toFormat("dd/LL/yyyy"),
+        date: date,
         sid: "a9e35080-fb00-11ea-bc07-4b7305fd5878",
         _: Date.now(),
       },
@@ -36,75 +33,134 @@ module.exports = {
           "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVpZCI6MjMzNTY2M30sImlhdCI6MTYwMDg3MTM2MX0.PRJTqfbUmNWrJ25zCGsm1y7o1UwhWkFqeRufk52c2tI",
         "Access-Control-Allow-Origin": "*",
       },
-    }).then(function (response) {
-      //console.log(response)
-      //res.send(response.data)
-      const current_data = { 
-        "three_top" : "801",
-        "two_top" : "01",
-        "two_under" : "21"
-      }
+    })
+      .then(function (response) {
+        //console.log(response)
+        //res.send(response.data)
+        const current_data = {
+          three_top: "801",
+          two_top: "01",
+          two_under: "21",
+        };
 
-      Lotto.findData(false, res, next, current_data);
-    }).catch(error => {
-      console.log(error);
+        Lotto.findData(false, res, next, current_data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  
+  addData: async (current_data, getDate) => {
+    let isCreate = false;
+    const yeekee = [];
+    let last_key = 0;
+    let newLotto = "";
+    let id = 0;
+    
+    await Lotto.findOne({ date: date }).then(function (value) {
+      if (value == null) {
+        isCreate = true;
+      } else {
+       id = value._id;
+        for (const key in value.yeekee) {
+          if (value.yeekee[key] != null) {
+            yeekee[key] = value.yeekee[key];
+            last_key++;
+          }
+        }
+      }
     });
-  }
+
+    yeekee[last_key] = current_data;
+
+    if (isCreate) {
+      const lotto = new Lotto({
+        date,
+        yeekee,
+      });
+      await lotto.save().then(function (value) {
+        newLotto = value;
+      });
+    } else {
+      const filter = { _id: id };
+      const update = { date: date, yeekee: yeekee };
+      //console.log(update)
+      await Lotto.findOneAndUpdate(filter, update, {
+        returnOriginal: false,
+      }).then(function (value) {
+        newLotto = value;
+      });
+    }
+    return newLotto;
+  },
+
+  getNewResult: async () => {
+    const lotto = await Lotto.findOne({ date: date }).then(function (value) {
+      if (value) {
+        getResultUnitDown(value.yeekee);
+        getResultTenDown(value.yeekee);
+      }
+    });
+  },
+
+  
 };
 
-
-function generateNumber (number) {
-  guess_count = 5-parseInt(number.length)
+function generateNumber(number) {
+  guess_count = 6 - parseInt(number.length);
   for (i = 0; i < guess_count; i++) {
-    lastNum = (parseInt(number.slice(-1))+1)
+    lastNum = parseInt(number.slice(-1)) + 1;
     if (lastNum == 10) {
-      lastNum = "0"
+      lastNum = "0";
     }
-    number = number+lastNum
-  }  
-  return number
+    number = number + lastNum;
+  }
+  return number;
 }
 
-function loopGetNum (number) {
+function loopGetNum(number) {
   do {
-    numberAfterGenerate = generateNumber(number)
+    numberAfterGenerate = generateNumber(number);
     number = numberAfterGenerate.replace(/(.)(?=.*\1)/g, "");
-  } while ( number.length < 5)
-  return number
+  } while (number.length < 6);
+  return number;
 }
 
-async function  createData (req, res, next, isCreate, id, curent_data, user_id) {
-  const data = req != false ? req.yeekee : false ;
+async function createData(req, res, next, isCreate, id, current_data, user_id) {
+  const data = req != false ? req.yeekee : false;
   const yeekee = [];
-  let last_key = 0
+  let last_key = 0;
 
   if (data != false) {
     for (const key in data) {
-      if (data[key] != null ){
+      if (data[key] != null) {
         yeekee[key] = data[key];
-        last_key++
+        last_key++;
       }
-    }    
-  } 
+    }
+  }
 
-  yeekee[last_key] = curent_data
+  yeekee[last_key] = current_data;
 
-  let newLotto = ""
+  let newLotto = "";
 
-  if (isCreate){
+  if (isCreate) {
     const lotto = new Lotto({
       date,
       yeekee,
     });
-    await lotto.save().then(function (value) {newLotto = value});
-  }else {    
+    await lotto.save().then(function (value) {
+      newLotto = value;
+    });
+  } else {
     const filter = { _id: id };
-    const update = { date: date ,yeekee : yeekee };
+    const update = { date: date, yeekee: yeekee };
     //console.log(update)
     await Lotto.findOneAndUpdate(filter, update, {
-      returnOriginal: false
-    })
-    .then(function (value) {newLotto = value});
+      returnOriginal: false,
+    }).then(function (value) {
+      newLotto = value;
+    });
   }
 
   let msg = "ปักล่างหน่วย 4 รอบมั้ง \r\n";
@@ -116,63 +172,37 @@ async function  createData (req, res, next, isCreate, id, curent_data, user_id) 
     const id = yeekee[key].two_under;
     const one = id.toString().substr(0, 1);
     const two = id.toString().substr(1, 1);
-    const number_default = ["12", "627", "230", "245", "326", "370", "079", "802", "562", "68"];
-    let guess = number_default[one] + number_default[two]
+    const number_default = [ "012", "267", "325", "245", "365", "376", "479", "287", "562", "680" ];
+    let guess = number_default[one] + number_default[two];
     let remove_duplicate = guess.replace(/(.)(?=.*\1)/g, "");
     if (key == 0) {
       result_num = loopGetNum(remove_duplicate);
       show = result_num;
     } else {
       let n = result_num.indexOf(two);
-      if ( n > -1) {
-        msg = msg + "//" + (parseInt(re_gen)-1)
+      if (n > -1) {
+        msg = msg + "//" + (parseInt(re_gen) - 1);
         const tmp_num = loopGetNum(remove_duplicate);
         result_num = tmp_num;
         show = result_num;
-        re_gen = 1
+        re_gen = 1;
       } else {
-        show = '';
-        if (re_gen > 4){
-          msg = msg + "//END"
+        show = "";
+        if (re_gen > 4) {
+          msg = msg + "//END";
           const tmp_num = loopGetNum(remove_duplicate);
           result_num = tmp_num;
           show = result_num;
-          re_gen = 1
+          re_gen = 1;
         }
       }
     }
-    re_gen++
-    if (show != '') {
-      msg = msg + "\r\n" + (parseInt(n)+parseInt(key)) + " : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show 
+    re_gen++;
+    if (show != "") {
+      msg = msg + "\r\n" + (parseInt(n) + parseInt(key)) +" : " + yeekee[key].three_top + "-" + yeekee[key].two_under + " = " + show;
     }
-  }  
+  }
 
-  // const headers = {
-  //   "Content-Type": "application/json",
-  //   Authorization:
-  //     "Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=",
-  // };
-  // const body = JSON.stringify({
-  //     replyToken: user_id,
-  //     messages: [
-  //       {
-  //         type: "text",
-  //         text: msg,
-  //       },
-  //     ],
-  //   });
-  
-  //   axios
-  //     .post("https://api.line.me/v2/bot/message/reply", body, {
-  //       headers: headers,
-  //     })
-  //     .then(function (response) {
-  //       //console.log(response);
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error.response.status);
-  //     });
-      
   // const client = new line.Client({
   //   channelAccessToken: config.LINE_BOT,
   // });
@@ -195,4 +225,126 @@ async function  createData (req, res, next, isCreate, id, curent_data, user_id) 
   next();
 }
 
+function getResultUnitDown (data) {
+  let msg = "ปักล่างหน่วย 4 รอบมั้ง \r\n";
+  let n = 1;
+  let result_num = "";
+  let re_gen = 1;
+  for (const key in data) {
+    const id = data[key].two_under;
+    const one = id.toString().substr(0, 1);
+    const two = id.toString().substr(1, 1);
+    const number_default = [ "012", "267", "325", "245", "365", "376", "479", "287", "562", "680" ];
+    let guess = number_default[one] + number_default[two];
+    let remove_duplicate = guess.replace(/(.)(?=.*\1)/g, "");
+    if (key == 0) {
+      result_num = loopGetNum(remove_duplicate);
+      show = result_num;
+    } else {
+      let n = result_num.indexOf(two);
+      if (n > -1) {
+        msg = msg + "//" + (parseInt(re_gen) - 1);
+        const tmp_num = loopGetNum(remove_duplicate);
+        result_num = tmp_num;
+        show = result_num;
+        re_gen = 1;
+      } else {
+        show = "";
+        if (re_gen > 4) {
+          msg = msg + "//END";
+          const tmp_num = loopGetNum(remove_duplicate);
+          result_num = tmp_num;
+          show = result_num;
+          re_gen = 1;
+        }
+      }
+    }
+    re_gen++;
+    if (show != "") {
+      msg = msg + "\r\n" + (parseInt(n) + parseInt(key)) +" : " + data[key].three_top + "-" + data[key].two_under + " = " + show;
+    }
+  }
+  axios({
+    method: "post",
+    url: "https://notify-api.line.me/api/notify",
+    headers: {
+      Authorization: "Bearer " + config.LINE_NOTIFY_FREE_LOTTO,
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Access-Control-Allow-Origin": "*",
+    },
+    data: querystring.stringify({
+      message: msg,
+    }),
+  })
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      //console.log(error);
+    });
+
+  console.log(msg)
+}
+
+function getResultTenDown (data) {
+  let msg = "ปักล่างสิบ 4 รอบมั้ง \r\n";
+  let n = 1;
+  let result_num = "";
+  let re_gen = 1;
+  for (const key in data) {
+    const id = data[key].two_under;
+    const one = id.toString().substr(0, 1);
+    const two = id.toString().substr(1, 1);
+    const number_default = [ "102", "762", "025", "245", "635", "376", "749", "872", "652", "608" ];
+    let guess = number_default[one] + number_default[two];
+    let remove_duplicate = guess.replace(/(.)(?=.*\1)/g, "");
+    if (key == 0) {
+      result_num = loopGetNum(remove_duplicate);
+      show = result_num;
+    } else {
+      let n = result_num.indexOf(one);
+      if (n > -1) {
+        msg = msg + "//" + (parseInt(re_gen) - 1);
+        const tmp_num = loopGetNum(remove_duplicate);
+        result_num = tmp_num;
+        show = result_num;
+        re_gen = 1;
+      } else {
+        show = "";
+        if (re_gen > 4) {
+          msg = msg + "//END";
+          const tmp_num = loopGetNum(remove_duplicate);
+          result_num = tmp_num;
+          show = result_num;
+          re_gen = 1;
+        }
+      }
+    }
+    re_gen++;
+    if (show != "") {
+      msg = msg + "\r\n" + (parseInt(n) + parseInt(key)) +" : " + data[key].three_top + "-" + data[key].two_under + " = " + show;
+    }
+  }
+
+  axios({
+    method: "post",
+    url: "https://notify-api.line.me/api/notify",
+    headers: {
+      Authorization: "Bearer " + config.LINE_NOTIFY_FREE_LOTTO,
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Access-Control-Allow-Origin": "*",
+    },
+    data: querystring.stringify({
+      message: msg,
+    }),
+  })
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      //console.log(error);
+    });
+
+  console.log(msg)
+}
 

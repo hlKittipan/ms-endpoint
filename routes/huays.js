@@ -8,8 +8,7 @@ const axios = require("axios");
 const cron = require("node-cron");
 const querystring = require("querystring");
 const { json } = require("body-parser");
-const request = require("request");
-
+const cheerio = require('cheerio')
 
 
 const options = {
@@ -119,24 +118,142 @@ module.exports = (server) => {
     // next();
   });
 
+  server.get("/getlottoresult",async (req,res,next) => {
+    let newLotto = "";
+    await axios({
+      method: "get",
+      url: "https://www.lottovip093.com/",
+    }).then(function (response) {
+      const $ = cheerio.load(response.data)
+      const upthree = $($(".border-danger p")[0]).html()
+      const uptwo = upthree.toString().substr(1, 2);
+      const downtwo = $($(".border-danger p")[0]).html()
+      const current_data = { 
+        "three_top" : upthree,
+        "two_top" : uptwo,
+        "two_under" : downtwo
+      }
+      newLotto = new Promise((resolve, reject) => {resolve(Lotto.addData(current_data, DateTime.local().toFormat("DD/MM/YYYY")))});
+      newLotto.then( (val) => console.log("asynchronous logging has val:",val) );
+      res.send(200)
+    }).catch(error => {
+      console.log(error);
+    });
+  })
+
+  server.get("/getnewresult", async (req, res, next) => {
+    let newLotto = "";
+    Lotto.getNewResult();
+    //console.log(newLotto)
+    res.send(200);
+    next();
+  })
+
 };
 
-cron.schedule("00 5 * * * *", function () {
+function syncDataCronTime(getDate) {
+  let newLotto = "";
+  axios({
+    method: "get",
+    url: "https://www.lottovip.com/login",
+  }).then(function (response) {
+    const $ = cheerio.load(response.data)
+    const upthree = $($(".border-danger p")[0]).html()
+    const uptwo = upthree.toString().substr(1, 2);
+    const downtwo = $($(".border-danger p")[1]).html()
+    const current_data = { 
+      "three_top" : upthree,
+      "two_top" : uptwo,
+      "two_under" : downtwo
+    }
+    newLotto = new Promise((resolve, reject) => {resolve(Lotto.addData(current_data, getDate))});
+    newLotto.then( (val) => console.log("asynchronous logging has val:",val) );
+    freeNotifyResult(current_data)
+  }).catch(error => {
+    console.log(error);
+  });
+}
+
+function freeNotifyResult (result) {
+  var msg = DateTime.local().minus({minute : 4}).toFormat("HH:mm") + ' : ' + result.three_top + "-" + result.two_under;
+  console.log("Free : " + msg);
+  axios({
+    method: "post",
+    url: "https://notify-api.line.me/api/notify",
+    headers: {
+      Authorization: "Bearer " + config.LINE_NOTIFY_FREE_LOTTO,
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Access-Control-Allow-Origin": "*",
+    },
+    data: querystring.stringify({
+      message: msg,
+    }),
+  })
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      //console.log(error);
+    });
+}
+//Midnight to 5 AM
+cron.schedule("00 4 0-5 * * *", function () {
   // Huay.getDataFromHuay()
+  syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
   console.log(DateTime.local().toFormat("F"));
 });
 
-cron.schedule("00 20 * * * *", function () {
+cron.schedule("00 19 0-5 * * *", function () {
   // Huay.getDataFromHuay()
+  syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
   console.log(DateTime.local().toFormat("F"));
 });
 
-cron.schedule("00 35 * * * *", function () {
+cron.schedule("00 34 0-5 * * *", function () {
   // Huay.getDataFromHuay()
+  syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
   console.log(DateTime.local().toFormat("F"));
 });
 
-cron.schedule("00 50 * * * *", function () {
+cron.schedule("00 49 0-5 * * *", function () {
   // Huay.getDataFromHuay()
+  syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
   console.log(DateTime.local().toFormat("F"));
 });
+//End Midnight to 5 AM
+
+//6 AM to 23 PM
+cron.schedule("00 4 23-6 * * *", function () {
+  // Huay.getDataFromHuay()
+  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  console.log(DateTime.local().toFormat("F"));
+});
+
+cron.schedule("00 19 23-6 * * *", function () {
+  // Huay.getDataFromHuay()
+  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  console.log(DateTime.local().toFormat("F"));
+});
+
+cron.schedule("00 34 23-6 * * *", function () {
+  // Huay.getDataFromHuay()
+  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  console.log(DateTime.local().toFormat("F"));
+});
+
+cron.schedule("00 49 23-6 * * *", function () {
+  // Huay.getDataFromHuay()
+  axios({
+    method: "get",
+    url: "localhost:3000/getnewresult",
+  })
+    .then(function (response) {
+      //console.log(response);
+    })
+    .catch(function (error) {
+      //console.log(error);
+    });
+  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  console.log(DateTime.local().toFormat("F"));
+});
+//End 6 AM to 23 PM
