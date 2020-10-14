@@ -6,6 +6,7 @@ const line = require("@line/bot-sdk");
 const config = require("../config");
 
 const date = DateTime.local().toFormat("dd/LL/yyyy");
+
 module.exports = {
   findData: async (req, res, next, current_data, remove_duplicate, user_id) => {
     let newLotto = "";
@@ -103,7 +104,115 @@ module.exports = {
     });
   },
 
+  getAll: async (reply_token) => {
+ 
+    let result = ""
+    const lotto = await Lotto.findOne({ date: date }).then(function (value) {
+      for (const key in value.yeekee) {
+        result = result + (parseInt(key)+1) + " : " + value.yeekee[key].three_top + "-" + value.yeekee[key].two_under + "\r\n"
+      }
+    });
+    
+    const body = JSON.stringify({
+      replyToken: reply_token,
+      messages: [
+        {
+          type: "text",
+          text: result,
+        },
+      ],
+    });
+
+    axios
+      .post("https://api.line.me/v2/bot/message/reply", body, {
+        headers: headers,
+      })
+      .then(function (response) {
+        //console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error.response.status);
+      });
+  },
+
+  removeLotto: async () => {
+    const lotto = await Lotto.findOneAndDelete({ date: date })
+  },
+
+  removeLottoByKey: async (ref_key, reply_token) => {
+    let new_yeekee = []
+    let id = ""
+    const lotto = await Lotto.findOne({ date: date }).then(function (value) {
+      id = value._id;
+      for (const key in value.yeekee) {
+        if ( (parseInt(key)+1) != ref_key ) {
+          new_yeekee.push(value.yeekee[key])
+        }
+      }
+    });
+    const filter = { _id: id };
+    const update = { date: date ,yeekee : new_yeekee };
+    //console.log(update)
+    await Lotto.findOneAndUpdate(filter, update, {
+      returnOriginal: false
+    }).then((value) => {this.getAll(reply_token)});
+  },
   
+  reply: (reply_token, user_id, msg) => {
+
+    let body = JSON.stringify({
+      replyToken: reply_token,
+      messages: [
+        {
+          type: "text",
+          text: msg,
+        },
+      ],
+    });
+
+    axios
+      .post("https://api.line.me/v2/bot/message/reply", body, {
+        headers: headers,
+      })
+      .then(function (response) {
+        //console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error.response.status);
+      });
+  },
+
+  insertLottoByKey: async (f_param, reply_token) => {
+    const f_key = f_param.split(" ")[0]
+    const f_value = f_param.split(" ")[1]
+    const one = f_value.toString().substr(0, 1);
+    const two = f_value.toString().substr(1, 1);
+    const three = f_value.toString().substr(2, 1);
+    const four = f_value.toString().substr(3, 1);
+    const five = f_value.toString().substr(4, 1);
+    const new_yeekee = []
+    let id = ""
+    const lotto = await Lotto.findOne({ date: date }).then(function (value) {
+      id = value._id;
+      for (const key in value.yeekee) {
+        if ( (parseInt(key)+1) == f_key ) {
+          new_yeekee.push({ 
+            "three_top" : one + two + three,
+            "two_top" : two + three,
+            "two_under" : four + five
+          })
+          new_yeekee.push(value.yeekee[key])
+        }
+        new_yeekee.push(value.yeekee[key])
+      }
+    });
+    const filter = { _id: id };
+    const update = { date: date ,yeekee : new_yeekee };
+    //console.log(update)
+    await Lotto.findOneAndUpdate(filter, update, {
+      returnOriginal: false
+    }).then((value) => {this.getAll(reply_token)});
+  },
 };
 
 function generateNumber(number) {
@@ -243,7 +352,7 @@ function getResultUnitDown (data) {
     } else {
       let n = result_num.indexOf(two);
       if (n > -1) {
-        msg = msg + "//" + (parseInt(re_gen) - 1);
+        msg = msg + "/" + (parseInt(re_gen) - 1);
         const tmp_num = loopGetNum(remove_duplicate);
         result_num = tmp_num;
         show = result_num;
@@ -251,7 +360,7 @@ function getResultUnitDown (data) {
       } else {
         show = "";
         if (re_gen > 4) {
-          msg = msg + "//END";
+          msg = msg + "/END";
           const tmp_num = loopGetNum(remove_duplicate);
           result_num = tmp_num;
           show = result_num;
@@ -261,7 +370,7 @@ function getResultUnitDown (data) {
     }
     re_gen++;
     if (show != "") {
-      msg = msg + "\r\n" + (parseInt(n) + parseInt(key)) +" : " + data[key].three_top + "-" + data[key].two_under + " = " + show;
+      msg = msg + "\r\n" + (parseInt(n) + parseInt(key)) +":" + data[key].three_top + "-" + data[key].two_under + "=" + show;
     }
   }
   axios({
@@ -304,7 +413,7 @@ function getResultTenDown (data) {
     } else {
       let n = result_num.indexOf(one);
       if (n > -1) {
-        msg = msg + "//" + (parseInt(re_gen) - 1);
+        msg = msg + "/" + (parseInt(re_gen) - 1);
         const tmp_num = loopGetNum(remove_duplicate);
         result_num = tmp_num;
         show = result_num;
@@ -312,7 +421,7 @@ function getResultTenDown (data) {
       } else {
         show = "";
         if (re_gen > 4) {
-          msg = msg + "//END";
+          msg = msg + "/END";
           const tmp_num = loopGetNum(remove_duplicate);
           result_num = tmp_num;
           show = result_num;
@@ -322,7 +431,7 @@ function getResultTenDown (data) {
     }
     re_gen++;
     if (show != "") {
-      msg = msg + "\r\n" + (parseInt(n) + parseInt(key)) +" : " + data[key].three_top + "-" + data[key].two_under + " = " + show;
+      msg = msg + "\r\n" + (parseInt(n) + parseInt(key)) +":" + data[key].three_top + "-" + data[key].two_under + "=" + show;
     }
   }
 

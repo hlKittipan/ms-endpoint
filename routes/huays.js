@@ -9,6 +9,13 @@ const cron = require("node-cron");
 const querystring = require("querystring");
 const { json } = require("body-parser");
 const cheerio = require('cheerio')
+const date = DateTime.local().toFormat("dd/LL/yyyy");
+
+const headers = {
+  "Content-Type": "application/json",
+  Authorization:
+    "Bearer Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=",
+};
 
 
 const options = {
@@ -37,7 +44,7 @@ module.exports = (server) => {
         method: "get",
         url: "https://s1.huay.com/api/lottery/result",
         data: {
-          date: DateTime.local().toFormat("dd/LL/yyyy"),
+          date: date,
           sid: "a9e35080-fb00-11ea-bc07-4b7305fd5878",
           _: Date.now(),
         },
@@ -149,6 +156,54 @@ module.exports = (server) => {
     next();
   })
 
+  server.post("/webhook", async (req, res, next) => {
+    const token = "sxZX9ZftGr17P6Hrc7M4pBi67B3Q4yyBOEyciKrtVwu";
+    let reply_token = req.body.events[0].replyToken;
+    let msg = req.body.events[0].message.text;
+    let user_id = req.body.events[0].source.userId;
+    if (req.body.events[0].source.hasOwnProperty("groupId")) {
+      user_id = req.body.events[0].source.groupId;
+    }
+    let check_case = msg.split(" ")[0]
+    check_case = check_case.toUpperCase();
+   
+    switch (check_case) {
+      case "HI":
+        Lotto.reply(reply_token, user_id, "What's up.");
+        break;
+      case "RESET":
+        Lotto.removeLotto()
+        Lotto.reply(reply_token, user_id, "Reset success.");
+        break;
+      case "REMOVE":
+        Lotto.removeLottoByKey( msg.split(" ")[1], reply_token)
+        Lotto.reply(reply_token, user_id, "Remove success.");
+        break;
+      case "ALL":
+        Lotto.getAll(reply_token);
+        break;
+      case "INSERT":
+        Lotto.insertLottoByKey( msg.split(" ")[1], reply_token);
+        break;
+    }
+  
+    if ( check_case === "ADD") {
+      axios
+        .get(
+          "https://line-bot-my-ks.herokuapp.com/lotto/" +
+            msg.split(" ")[1] + "," + reply_token
+        )
+        .then(function (response) {
+          console.log(response.data);
+          Lotto.reply(reply_token, user_id, response.data);
+        })
+        .catch(function (error) {
+          console.log(error.response.status);
+        });
+    }
+  
+    res.send(200);
+  });
 };
 
 function syncDataCronTime(getDate) {
@@ -165,6 +220,9 @@ function syncDataCronTime(getDate) {
       "three_top" : upthree,
       "two_top" : uptwo,
       "two_under" : downtwo
+    }
+    if (upthree == "xxx") {
+      syncDataCronTime(getDate);
     }
     newLotto = new Promise((resolve, reject) => {resolve(Lotto.addData(current_data, getDate))});
     newLotto.then( (val) => console.log("asynchronous logging has val:",val) );
@@ -225,19 +283,19 @@ cron.schedule("00 49 0-5 * * *", function () {
 //6 AM to 23 PM
 cron.schedule("00 4 23-6 * * *", function () {
   // Huay.getDataFromHuay()
-  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
 });
 
 cron.schedule("00 19 23-6 * * *", function () {
   // Huay.getDataFromHuay()
-  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
 });
 
 cron.schedule("00 34 23-6 * * *", function () {
   // Huay.getDataFromHuay()
-  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
 });
 
@@ -253,7 +311,10 @@ cron.schedule("00 49 23-6 * * *", function () {
     .catch(function (error) {
       //console.log(error);
     });
-  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
 });
 //End 6 AM to 23 PM
+
+
+
