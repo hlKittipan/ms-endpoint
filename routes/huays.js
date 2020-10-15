@@ -326,7 +326,7 @@ cron.schedule("00 49 23-6 * * *", function () {
     url: "http://localhost:3000/getnewresult",
   })
     .then(function (response) {
-      //console.log(response);
+      console.log(response);
     })
     .catch(function (error) {
       console.log(error);
