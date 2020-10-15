@@ -226,6 +226,8 @@ function syncDataCronTime(getDate) {
       syncDataCronTime(getDate);
     }
 =======
+    console.log(current_data);
+    console.log(getDate);
 >>>>>>> Stashed changes
     newLotto = new Promise((resolve, reject) => {resolve(Lotto.addData(current_data, getDate))});
     newLotto.then( (val) => console.log("asynchronous logging has val:",val) );
@@ -261,25 +263,25 @@ function freeNotifyResult (result) {
 cron.schedule("00 4 0-5 * * *", function () {
   // Huay.getDataFromHuay()
   syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F"));
+  console.log(DateTime.local().toFormat("F HH:mm:ss"));
 });
 
 cron.schedule("00 19 0-5 * * *", function () {
   // Huay.getDataFromHuay()
   syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F"));
+  console.log(DateTime.local().toFormat("F HH:mm:ss"));
 });
 
 cron.schedule("00 34 0-5 * * *", function () {
   // Huay.getDataFromHuay()
   syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F"));
+  console.log(DateTime.local().toFormat("F HH:mm:ss"));
 });
 
 cron.schedule("00 49 0-5 * * *", function () {
   // Huay.getDataFromHuay()
   syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F"));
+  console.log(DateTime.local().toFormat("F HH:mm:ss"));
 });
 //End Midnight to 5 AM
 
@@ -290,6 +292,8 @@ cron.schedule("00 4 23-6 * * *", function () {
   syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
 =======
+  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  console.log(DateTime.local().toFormat("F HH:mm:ss"));
 >>>>>>> Stashed changes
 });
 
@@ -299,6 +303,8 @@ cron.schedule("00 19 23-6 * * *", function () {
   syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
 =======
+  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  console.log(DateTime.local().toFormat("F HH:mm:ss"));
 >>>>>>> Stashed changes
 });
 
@@ -308,6 +314,8 @@ cron.schedule("00 34 23-6 * * *", function () {
   syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
 =======
+  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  console.log(DateTime.local().toFormat("F HH:mm:ss"));
 >>>>>>> Stashed changes
 });
 
@@ -315,13 +323,13 @@ cron.schedule("00 49 23-6 * * *", function () {
   // Huay.getDataFromHuay()
   axios({
     method: "get",
-    url: "localhost:3000/getnewresult",
+    url: "http://localhost:3000/getnewresult",
   })
     .then(function (response) {
       //console.log(response);
     })
     .catch(function (error) {
-      //console.log(error);
+      console.log(error);
     });
 <<<<<<< Updated upstream
   syncDataCronTime(date)
@@ -332,6 +340,9 @@ cron.schedule("00 49 23-6 * * *", function () {
 
 
 =======
+  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+  console.log(DateTime.local().toFormat("F HH:mm:ss"));
+});
 //End 6 AM to 23 PM
 
 >>>>>>> Stashed changes
