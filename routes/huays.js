@@ -221,9 +221,12 @@ function syncDataCronTime(getDate) {
       "two_top" : uptwo,
       "two_under" : downtwo
     }
+<<<<<<< Updated upstream
     if (upthree == "xxx") {
       syncDataCronTime(getDate);
     }
+=======
+>>>>>>> Stashed changes
     newLotto = new Promise((resolve, reject) => {resolve(Lotto.addData(current_data, getDate))});
     newLotto.then( (val) => console.log("asynchronous logging has val:",val) );
     freeNotifyResult(current_data)
@@ -283,20 +286,29 @@ cron.schedule("00 49 0-5 * * *", function () {
 //6 AM to 23 PM
 cron.schedule("00 4 23-6 * * *", function () {
   // Huay.getDataFromHuay()
+<<<<<<< Updated upstream
   syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
+=======
+>>>>>>> Stashed changes
 });
 
 cron.schedule("00 19 23-6 * * *", function () {
   // Huay.getDataFromHuay()
+<<<<<<< Updated upstream
   syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
+=======
+>>>>>>> Stashed changes
 });
 
 cron.schedule("00 34 23-6 * * *", function () {
   // Huay.getDataFromHuay()
+<<<<<<< Updated upstream
   syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
+=======
+>>>>>>> Stashed changes
 });
 
 cron.schedule("00 49 23-6 * * *", function () {
@@ -311,6 +323,7 @@ cron.schedule("00 49 23-6 * * *", function () {
     .catch(function (error) {
       //console.log(error);
     });
+<<<<<<< Updated upstream
   syncDataCronTime(date)
   console.log(DateTime.local().toFormat("F"));
 });
@@ -318,3 +331,7 @@ cron.schedule("00 49 23-6 * * *", function () {
 
 
 
+=======
+//End 6 AM to 23 PM
+
+>>>>>>> Stashed changes
