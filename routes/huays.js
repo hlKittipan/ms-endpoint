@@ -218,12 +218,13 @@ function syncDataCronTime(getDate) {
     }
     if (upthree == "xxx") {
       syncDataCronTime(getDate);
+    }else{
+      console.log(current_data);
+      console.log(getDate);
+      newLotto = new Promise((resolve, reject) => {resolve(Lotto.addData(current_data, getDate))});
+      newLotto.then( (val) => console.log("asynchronous logging has val:",val) );
     }
-    console.log(current_data);
-    console.log(getDate);
-    newLotto = new Promise((resolve, reject) => {resolve(Lotto.addData(current_data, getDate))});
-    newLotto.then( (val) => console.log("asynchronous logging has val:",val) );
-    freeNotifyResult(current_data)
+    //freeNotifyResult(current_data)
   }).catch(error => {
     console.log(error);
   });

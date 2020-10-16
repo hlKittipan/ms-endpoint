@@ -64,7 +64,7 @@ module.exports = {
     let newLotto = "";
     let id = 0;
     
-    await Lotto.findOne({ date: date }).then(function (value) {
+    await Lotto.findOne({ date: getDate }).then(function (value) {
       if (value == null) {
         isCreate = true;
       } else {
@@ -113,7 +113,7 @@ module.exports = {
   getAll: async (reply_token) => {
  
     let result = ""
-    const lotto = await Lotto.findOne({ date: date }).then(function (value) {
+    const lotto = await Lotto.findOne({ date: date }).then(function (value) {      
       for (const key in value.yeekee) {
         result = result + (parseInt(key)+1) + " : " + value.yeekee[key].three_top + "-" + value.yeekee[key].two_under + "\r\n"
       }
@@ -345,6 +345,7 @@ function getResultUnitDown (data) {
   let n = 1;
   let result_num = "";
   let re_gen = 1;
+  let isEnd = true;
   for (const key in data) {
     const id = data[key].two_under;
     const one = id.toString().substr(0, 1);
@@ -371,6 +372,8 @@ function getResultUnitDown (data) {
           result_num = tmp_num;
           show = result_num;
           re_gen = 1;
+          isEnd = false;
+
         }
       }
     }
@@ -379,25 +382,27 @@ function getResultUnitDown (data) {
       msg = msg + "\r\n" + (parseInt(n) + parseInt(key)) +":" + data[key].three_top + "-" + data[key].two_under + "=" + show;
     }
   }
-  axios({
-    method: "post",
-    url: "https://notify-api.line.me/api/notify",
-    headers: {
-      Authorization: "Bearer " + config.LINE_NOTIFY_FREE_LOTTO,
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Access-Control-Allow-Origin": "*",
-    },
-    data: querystring.stringify({
-      message: msg,
-    }),
-  })
-    .then(function (response) {
-      //console.log(response);
+  if (isEnd == true) {
+    axios({
+      method: "post",
+      url: "https://notify-api.line.me/api/notify",
+      headers: {
+        Authorization: "Bearer " + config.LINE_NOTIFY_LOTTO,
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Access-Control-Allow-Origin": "*",
+      },
+      data: querystring.stringify({
+        message: msg,
+      }),
     })
-    .catch(function (error) {
-      //console.log(error);
-    });
-
+      .then(function (response) {
+        //console.log(response);
+      })
+      .catch(function (error) {
+        //console.log(error);
+      });
+  
+  }  
   console.log(msg)
 }
 
@@ -406,6 +411,7 @@ function getResultTenDown (data) {
   let n = 1;
   let result_num = "";
   let re_gen = 1;
+  let isEnd = true;
   for (const key in data) {
     const id = data[key].two_under;
     const one = id.toString().substr(0, 1);
@@ -432,6 +438,7 @@ function getResultTenDown (data) {
           result_num = tmp_num;
           show = result_num;
           re_gen = 1;
+          isEnd = false;
         }
       }
     }
@@ -440,25 +447,27 @@ function getResultTenDown (data) {
       msg = msg + "\r\n" + (parseInt(n) + parseInt(key)) +":" + data[key].three_top + "-" + data[key].two_under + "=" + show;
     }
   }
-
-  axios({
-    method: "post",
-    url: "https://notify-api.line.me/api/notify",
-    headers: {
-      Authorization: "Bearer " + config.LINE_NOTIFY_FREE_LOTTO,
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Access-Control-Allow-Origin": "*",
-    },
-    data: querystring.stringify({
-      message: msg,
-    }),
-  })
-    .then(function (response) {
-      //console.log(response);
+  if (isEnd == true) {
+    axios({
+      method: "post",
+      url: "https://notify-api.line.me/api/notify",
+      headers: {
+        Authorization: "Bearer " + config.LINE_NOTIFY_LOTTO,
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Access-Control-Allow-Origin": "*",
+      },
+      data: querystring.stringify({
+        message: msg,
+      }),
     })
-    .catch(function (error) {
-      //console.log(error);
-    });
+      .then(function (response) {
+        //console.log(response);
+      })
+      .catch(function (error) {
+        //console.log(error);
+      });
+  }
+
 
   console.log(msg)
 }
