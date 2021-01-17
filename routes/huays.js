@@ -252,65 +252,66 @@ function freeNotifyResult (result) {
       //console.log(error);
     });
 }
-//Midnight to 5 AM
-cron.schedule("00 4 0-5 * * *", function () {
-  // Huay.getDataFromHuay()
-  syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F HH:mm:ss"));
-});
 
-cron.schedule("00 19 0-5 * * *", function () {
-  // Huay.getDataFromHuay()
-  syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F HH:mm:ss"));
-});
+// //Midnight to 5 AM
+// cron.schedule("00 4 0-5 * * *", function () {
+//   // Huay.getDataFromHuay()
+//   syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
+//   console.log(DateTime.local().toFormat("F HH:mm:ss"));
+// });
 
-cron.schedule("00 34 0-5 * * *", function () {
-  // Huay.getDataFromHuay()
-  syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F HH:mm:ss"));
-});
+// cron.schedule("00 19 0-5 * * *", function () {
+//   // Huay.getDataFromHuay()
+//   syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
+//   console.log(DateTime.local().toFormat("F HH:mm:ss"));
+// });
 
-cron.schedule("00 49 0-5 * * *", function () {
-  // Huay.getDataFromHuay()
-  syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F HH:mm:ss"));
-});
-//End Midnight to 5 AM
+// cron.schedule("00 34 0-5 * * *", function () {
+//   // Huay.getDataFromHuay()
+//   syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
+//   console.log(DateTime.local().toFormat("F HH:mm:ss"));
+// });
 
-//6 AM to 23 PM
-cron.schedule("00 4 23-6 * * *", function () {
-  // Huay.getDataFromHuay()
-  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F HH:mm:ss"));
-});
+// cron.schedule("00 49 0-5 * * *", function () {
+//   // Huay.getDataFromHuay()
+//   syncDataCronTime(DateTime.local().minus({day : 1}).toFormat("dd/LL/yyyy"))
+//   console.log(DateTime.local().toFormat("F HH:mm:ss"));
+// });
+// //End Midnight to 5 AM
 
-cron.schedule("00 19 23-6 * * *", function () {
-  // Huay.getDataFromHuay()
-  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F HH:mm:ss"));
-});
+// //6 AM to 23 PM
+// cron.schedule("00 4 23-6 * * *", function () {
+//   // Huay.getDataFromHuay()
+//   syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+//   console.log(DateTime.local().toFormat("F HH:mm:ss"));
+// });
 
-cron.schedule("00 34 23-6 * * *", function () {
-  // Huay.getDataFromHuay()
-  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F HH:mm:ss"));
-});
+// cron.schedule("00 19 23-6 * * *", function () {
+//   // Huay.getDataFromHuay()
+//   syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+//   console.log(DateTime.local().toFormat("F HH:mm:ss"));
+// });
 
-cron.schedule("00 49 23-6 * * *", function () {
-  // Huay.getDataFromHuay()
-  axios({
-    method: "get",
-    url: "http://localhost:3000/getnewresult",
-  })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
-  console.log(DateTime.local().toFormat("F HH:mm:ss"));
-});
-//End 6 AM to 23 PM
+// cron.schedule("00 34 23-6 * * *", function () {
+//   // Huay.getDataFromHuay()
+//   syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+//   console.log(DateTime.local().toFormat("F HH:mm:ss"));
+// });
+
+// cron.schedule("00 49 23-6 * * *", function () {
+//   // Huay.getDataFromHuay()
+//   axios({
+//     method: "get",
+//     url: "http://localhost:3000/getnewresult",
+//   })
+//     .then(function (response) {
+//       console.log(response);
+//     })
+//     .catch(function (error) {
+//       console.log(error);
+//     });
+//   syncDataCronTime(DateTime.local().toFormat("dd/LL/yyyy"))
+//   console.log(DateTime.local().toFormat("F HH:mm:ss"));
+// });
+// //End 6 AM to 23 PM
 
