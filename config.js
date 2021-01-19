@@ -10,6 +10,6 @@ module.exports = {
   LINE_NOTIFY_LOTTO: process.env.LINE_NOTIFY_LOTTO || 'N5DTBPPRvQI5lOD9Aot3op1XakvGMQVCczcPiXC8URr',
   BANK_USERNAME: process.env.BANK_USERNAME || '',
   BANK_PASSWORD: process.env.BANK_PASSWORD || '',
-  WP_USERNAME: process.env.WP_USERNAME || 'g2ctya',
-  WP_PASSWORD: process.env.WP_PASSWORD || 'FHeGW44&G8^%vvc^'
+  WP_USERNAME: process.env.WP_USERNAME || '',
+  WP_PASSWORD: process.env.WP_PASSWORD || ''
 }
