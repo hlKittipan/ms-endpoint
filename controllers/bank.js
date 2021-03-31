@@ -2,7 +2,6 @@ const cron = require("node-cron");
 const querystring = require("querystring");
 const { json } = require("body-parser");
 const cheerio = require("cheerio");
-const config = require("../config");
 const { DateTime } = require("luxon");
 const request = require("request");
 const axios = require("axios");
@@ -94,7 +93,7 @@ module.exports = {
         const model = body(this).children().children().children(".yacht_grid_title").text();
         const str = model;
         const res = str.replace("/", "-");
-        const dir = replaceKrub(res);
+        const dir = res;
         // const dir = res;
         // if (!fs.existsSync(dir)) {
         //   fs.mkdirSync(dir, {
@@ -115,7 +114,7 @@ module.exports = {
     try {
       const pathFilename = "E:/www/sdndev230/website/Boat/pict/upload/"
       fs.readFile(
-        "E:/www/sdndev230/website/Boat/pict/upload/somefile.txt", "utf8",
+        "E:/www/sdndev230/website/Boat/pict/upload/somefile0.txt", "utf8",
         async function (err, data) {
            console.log(listLink)
           // Display the file content
@@ -209,7 +208,7 @@ module.exports = {
         const model = body(this).children().children().children(".yacht_grid_title").text();
         const str = model;
         const res = str.replace("/", "-");
-        const dir = replaceKrub(res);
+        const dir = res;
         // if (!fs.existsSync(dir)) {
         //   fs.mkdirSync(dir, {
         //     recursive: true
@@ -229,7 +228,7 @@ module.exports = {
     try {
       const pathFilename = "E:/www/sdndev230/website/Boat/pict/upload/plan/"
       fs.readFile(
-        "E:/www/sdndev230/website/Boat/pict/upload/somefile.txt", "utf8",
+        "E:/www/sdndev230/website/Boat/pict/upload/somefile0.txt", "utf8",
         async function (err, data) {
            console.log(listLink)
           // Display the file content

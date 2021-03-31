@@ -1,17 +1,12 @@
+require('dotenv').config()
 const express = require("express");
-// const cors = require("cors");
 const mongoose = require("mongoose");
-// const bodyParser = require("body-parser");
-// const app = express();
 const restify = require("restify");
-const config = require("./config");
+const config = require("./configs/index");
 const rjwt = require("restify-jwt-community");
-const axios = require("axios");
-const querystring = require("querystring");
-const { DateTime } = require("luxon");
-
-
+const state = { isShutdown: false };
 const server = restify.createServer();
+const axios = require("axios");
 
 // Middleware
 server.use(restify.plugins.bodyParser());
@@ -28,7 +23,7 @@ server.listen(config.PORT, () => {
     })
     .then(
       () => {
-        console.log("[success] task  : connected to the database ");
+        console.log("[success] task  : connected to the database ");        
       },
       (error) => {
         console.log("[failed] task  " + error);
@@ -53,6 +48,35 @@ db.once("open", () => {
 server.get("/", async (req, res, next) => {
   res.send("Hello world" + Date.now());
 });
+
+server.get('/healthz', (req, res) => {
+  if (state.isShutdown) {
+    res.status(500).send('respon not ok');
+  } 
+  res.status(200).send('respon ok');
+});
+
+// Graceful Shutdown
+const gracefulShutdown = () => {
+  axios.post('http://localhost:'+process.env.PORT+'/stop-agenda')
+  state.isShutdown = true
+  console.info('Got SIGTERM. Graceful shutdown start', new Date().toISOString())
+  server.close(() => {
+      console.log('Closed out remaining connections.')
+      mongoose.connection.close(false, () => {
+        console.log('MongoDb connection closed.');
+      });
+      process.exit()
+  })
+  setTimeout(() => {
+     console.error('Could not close connections in time, forcefully shutting down')
+     process.exit()
+  }, 10 * 1000)
+}
+// listen for TERM signal .e.g. kill
+process.on('SIGTERM', gracefulShutdown)
+// listen for INT signal e.g. Ctrl-C
+process.on('SIGINT', gracefulShutdown)
 
 // app.use(bodyParser.json());
 
