@@ -41,22 +41,22 @@ module.exports = (server) => {
     agenda.start();
   })
 };
-agenda.define("get transection scb", async (job,done) => {
-  let countDownGetBnk = Math.floor(Math.random()* Math.floor(5));
-  console.log(countDownGetBnk)
-  setTimeout(() => {
-    console.log(DateTime.local().toFormat("F HH:mm:ss"))
-  }, countDownGetBnk);
-  done();
-});
-(async function () {
-  // IIFE to give access to async/await
+// agenda.define("get transection scb", async (job,done) => {
+//   let countDownGetBnk = Math.floor(Math.random()* Math.floor(5));
+//   console.log(countDownGetBnk)
+//   setTimeout(() => {
+//     console.log(DateTime.local().toFormat("F HH:mm:ss"))
+//   }, countDownGetBnk);
+//   done();
+// });
+// (async function () {
+//   // IIFE to give access to async/await
 
-  agenda.on('ready', async () => { // wait for mongo connection.
-    await agenda.every("1 seconds", "get transection scb");
-    await agenda.start();
-  })
-})();
+//   agenda.on('ready', async () => { // wait for mongo connection.
+//     await agenda.every("1 seconds", "get transection scb");
+//     await agenda.start();
+//   })
+// })();
 
 
 

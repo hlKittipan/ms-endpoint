@@ -1,82 +1,83 @@
-require('dotenv').config()
+require("dotenv").config();
 const express = require("express");
+const app = express();
 const mongoose = require("mongoose");
-const restify = require("restify");
 const config = require("./configs/index");
-const rjwt = require("restify-jwt-community");
 const state = { isShutdown: false };
-const server = restify.createServer();
 const axios = require("axios");
+const bodyParser = require("body-parser");
 
-// Middleware
-server.use(restify.plugins.bodyParser());
+mongoose.Promise = global.Promise;
+mongoose.set("useFindAndModify", false);
+mongoose
+  .connect(config.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(
+    () => {
+      console.log("[success] task  : connected to the database ");
+    },
+    (error) => {
+      console.log("[failed] task  " + error);
+      process.exit();
+    }
+  );
+mongoose.connection;
 
-// Protext routes
-//server.use(rjwt({ secret: config.JWT_SERCRET}).unless({ path: ['/auth']}));
-
-server.listen(config.PORT, () => {
-  mongoose.set("useFindAndModify", false);
-  mongoose
-    .connect(config.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
-    .then(
-      () => {
-        console.log("[success] task  : connected to the database ");        
-      },
-      (error) => {
-        console.log("[failed] task  " + error);
-        process.exit();
-      }
-    );
-});
-
-const db = mongoose.connection;
-
-db.on("error", (err) => console.log(err));
-
-db.once("open", () => {
-  require("./routes/customers")(server);
-  require("./routes/users")(server);
-  require("./routes/access_bank")(server);
-  // require("./routes/huays")(server);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.listen(config.PORT, () => {
   console.log("Server started on port " + config.PORT);
 });
 
+app.on("error", (err) => console.log(err));
+
+require("./routes/customers")(app);
+require("./routes/users")(app);
+require("./routes/access_bank")(app);
+require("./routes/chachang/menu")(app);
+// require("./routes/huays")(app);
+
+
 // test
-server.get("/", async (req, res, next) => {
+app.get("/", async (req, res, next) => {
   res.send("Hello world" + Date.now());
 });
 
-server.get('/healthz', (req, res) => {
+app.get("/healthz", (req, res) => {
   if (state.isShutdown) {
-    res.status(500).send('respon not ok');
-  } 
-  res.status(200).send('respon ok');
+    res.status(500).send("respon not ok");
+  }
+  res.status(200).send("respon ok");
 });
 
 // Graceful Shutdown
 const gracefulShutdown = () => {
-  axios.post('http://localhost:'+process.env.PORT+'/stop-agenda')
-  state.isShutdown = true
-  console.info('Got SIGTERM. Graceful shutdown start', new Date().toISOString())
-  server.close(() => {
-      console.log('Closed out remaining connections.')
-      mongoose.connection.close(false, () => {
-        console.log('MongoDb connection closed.');
-      });
-      process.exit()
-  })
+  axios.post("http://localhost:" + process.env.PORT + "/stop-agenda");
+  state.isShutdown = true;
+  console.info(
+    "Got SIGTERM. Graceful shutdown start",
+    new Date().toISOString()
+  );
+  app.close(() => {
+    console.log("Closed out remaining connections.");
+    mongoose.connection.close(false, () => {
+      console.log("MongoDb connection closed.");
+    });
+    process.exit();
+  });
   setTimeout(() => {
-     console.error('Could not close connections in time, forcefully shutting down')
-     process.exit()
-  }, 10 * 1000)
-}
+    console.error(
+      "Could not close connections in time, forcefully shutting down"
+    );
+    process.exit();
+  }, 10 * 1000);
+};
 // listen for TERM signal .e.g. kill
-process.on('SIGTERM', gracefulShutdown)
+process.on("SIGTERM", gracefulShutdown);
 // listen for INT signal e.g. Ctrl-C
-process.on('SIGINT', gracefulShutdown)
+process.on("SIGINT", gracefulShutdown);
 
 // app.use(bodyParser.json());
 
