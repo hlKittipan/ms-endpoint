@@ -25,8 +25,6 @@ mongoose
   );
 mongoose.connection;
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 app.listen(config.PORT, () => {
   console.log("Server started on port " + config.PORT);
 });
@@ -51,6 +49,16 @@ app.get("/healthz", (req, res) => {
   }
   res.status(200).send("respon ok");
 });
+
+app.use(function errorHandler (err, req, res, next) {
+  
+  if (res.headersSent) {
+    return next(err)
+  }
+  // res.status(500)
+  // res.render('error', { error: err })
+  res.status(500).json({ status: false })
+})
 
 // Graceful Shutdown
 const gracefulShutdown = () => {

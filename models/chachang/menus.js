@@ -15,10 +15,17 @@ const MenuSchema = new mongoose.Schema({
   price: {},
   type: {
     type: String
+  },
+  deleted_at: {
+    type: Date
   }
 });
 
 MenuSchema.plugin(timestamp);
+
+MenuSchema.statics.findAvailable = function(cb) {
+  return this.find({ deleted_at:null }, cb);
+};
 
 const Menu = mongoose.model('Menu', MenuSchema);
 module.exports = Menu;
