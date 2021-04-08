@@ -16,7 +16,7 @@ const MenuSchema = new mongoose.Schema({
   type: {
     type: String
   },
-  deleted_at: {
+  deletedAt: {
     type: Date
   }
 });
@@ -24,7 +24,11 @@ const MenuSchema = new mongoose.Schema({
 MenuSchema.plugin(timestamp);
 
 MenuSchema.statics.findAvailable = function(cb) {
-  return this.find({ deleted_at:null }, cb);
+  return this.find({ deletedAt:null }, cb);
+};
+
+MenuSchema.statics.softDelete = function(cb) {
+  return this.findOneAndUpdate( { _id: cb }, { deletedAt: Date.now() });
 };
 
 const Menu = mongoose.model('Menu', MenuSchema);

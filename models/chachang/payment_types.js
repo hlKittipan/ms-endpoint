@@ -6,12 +6,20 @@ const PaymentTypeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  deleted_at: {
+  deletedAt: {
     type: Date
   }
 });
 
 PaymentTypeSchema.plugin(timestamp);
+
+PaymentTypeSchema.statics.findAvailable = function(cb) {
+  return this.find({ deletedAt:null }, cb);
+};
+
+PaymentTypeSchema.statics.softDelete = function(cb) {
+  return this.findOneAndUpdate( { _id: cb }, { deletedAt: Date.now() });
+};
 
 const PaymentType = mongoose.model('PaymentType', PaymentTypeSchema);
 module.exports = PaymentType;

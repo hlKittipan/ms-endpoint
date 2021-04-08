@@ -1,7 +1,7 @@
 const Menu = require("../../controllers/chachang/menu");
 
 module.exports = (server) => {
-  server.get("/chachang/fetchdata", async (req, res, next) => {
+  server.get("/chachang/menu", async (req, res, next) => {
     Menu.fetchData(req, res, next);
   });  
   server.post("/chachang/menu", async (req, res, next) => {

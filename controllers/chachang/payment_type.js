@@ -1,13 +1,13 @@
 const { DateTime } = require("luxon");
 const axios = require("axios");
 const _ = require("lodash");
-const Menu = require("../../models/chachang/menus");
+const paymentType = require("../../models/chachang/payment_types");
 
 module.exports = {
   index: async (req, res, next) => {},
   fetchData: async (req, res, next) => {
     try {
-      const result = await Menu.findAvailable();
+      const result = await paymentType.findAvailable();
       res.status(200).send(result);
       next();
     } catch (error) {
@@ -18,11 +18,8 @@ module.exports = {
   store: async (req, res, next) => {
     console.log(req.body)
     try {
-      const data = new Menu({
-        name: req.body.name,
-        name_th: req.body.name_th,
-        price: req.body.price,
-        type: req.body.type,
+      const data = new paymentType({
+        name: req.body.name,      
       });
       const result = await data.save();
       res.status(200).send(result);
@@ -35,15 +32,12 @@ module.exports = {
     console.log(req.params)
     console.log(req.body)
     try {
-      const result = await Menu.findOneAndUpdate(
+      const result = await paymentType.findOneAndUpdate(
         {
           _id: req.params.id,
         },
         {
-          name: req.body.name,
-          name_th: req.body.name_th,
-          price: req.body.price,
-          type: req.body.type,
+          name: req.body.name,          
         },{ new: true }
       );
       res.status(200).send(result);
@@ -56,8 +50,8 @@ module.exports = {
   delete: async (req, res, next) => {
     console.log(req.params)
     try {
-      const result = await Menu.softDelete(req.params.id);
-      if (result === null ) {
+      const result = await paymentType.softDelete(req.params.id);
+      if (result === null) {
         res.status(404).send(result);
       }else {
         res.status(200).send({ status : 'Delete success' });

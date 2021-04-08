@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const config = require("./configs/index");
 const state = { isShutdown: false };
 const axios = require("axios");
-const bodyParser = require("body-parser");
 
 mongoose.Promise = global.Promise;
 mongoose.set("useFindAndModify", false);
@@ -25,16 +24,22 @@ mongoose
   );
 mongoose.connection;
 
-app.listen(config.PORT, () => {
+const server = app.listen(config.PORT, () => {
   console.log("Server started on port " + config.PORT);
 });
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: false }))
+// parse application/json
+app.use(express.json())
 
 app.on("error", (err) => console.log(err));
 
 require("./routes/customers")(app);
 require("./routes/users")(app);
-require("./routes/access_bank")(app);
+// require("./routes/access_bank")(app);
 require("./routes/chachang/menu")(app);
+require("./routes/chachang/payment_type")(app);
+require("./routes/chachang/order")(app);
 // require("./routes/huays")(app);
 
 
@@ -55,9 +60,10 @@ app.use(function errorHandler (err, req, res, next) {
   if (res.headersSent) {
     return next(err)
   }
+  console.log("err " + err)
   // res.status(500)
   // res.render('error', { error: err })
-  res.status(500).json({ status: false })
+  res.status(500).send(err)
 })
 
 // Graceful Shutdown
@@ -68,7 +74,7 @@ const gracefulShutdown = () => {
     "Got SIGTERM. Graceful shutdown start",
     new Date().toISOString()
   );
-  app.close(() => {
+  server.close(() => {
     console.log("Closed out remaining connections.");
     mongoose.connection.close(false, () => {
       console.log("MongoDb connection closed.");

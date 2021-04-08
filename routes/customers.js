@@ -1,5 +1,3 @@
-const errors = require('restify-errors');
-const rjwt = require('restify-jwt-community');
 const Customer = require('../models/customer');
 const config = require('../configs/index');
 
@@ -11,7 +9,7 @@ module.exports = (server) => {
       res.send(customers);
       next();
     } catch (err) {
-      return next(new errors.InvalidContentError(err));
+      
     }
   });
 
@@ -23,17 +21,15 @@ module.exports = (server) => {
       next();
     } catch (err) {
       return next(
-        new errors.ResourceNotFoundError(
-          "There is no customer with the id of " + req.params.id
-        )
+        
       );
     }
   });
 
   // add customers
-  server.post('/customers', rjwt({ secret: config.JWT_SERCRET }), async (req, res, next) => {
+  server.post('/customers', async (req, res, next) => {
     if (!req.is("application/json")) {
-      return next(new errors.InvalidContentError("Expects 'applications/json'"));
+      
     }
 
     const { name, email, balance } = req.body;
@@ -48,14 +44,14 @@ module.exports = (server) => {
       res.send(201);
       next();
     } catch (err) {
-      return next(new errors.InternalError(err.message));
+      
     }
   });
 
   // update customer
-  server.put("/customers/:id", rjwt({ secret: config.JWT_SERCRET }), async (req, res, next) => {
+  server.put("/customers/:id",  async (req, res, next) => {
     if (!req.is("application/json")) {
-      return next(new errors.InvalidContentError("Expects 'applications/json"));
+      
     }
 
     const { name, email, balance } = req.body;
@@ -70,26 +66,18 @@ module.exports = (server) => {
       res.send(200);
       next();
     } catch (err) {
-      return next(
-        new errors.ResourceNotFoundError(
-          "There is no customer with the id of " + req.params.id
-        )
-      );
+      
     }
   });
 
   // Delete customer
-  server.delete("/customers/:id",  rjwt({ secret: config.JWT_SERCRET }), async (req, res, next) => {
+  server.delete("/customers/:id",   async (req, res, next) => {
     try {
       const customer = await Customer.findOneAndDelete({ _id: req.params.id });
       res.send(204);
       next();
     } catch (err) {
-      return next(
-        new errors.ResourceNotFoundError(
-          "There is no customer with the id of " + req.params.id
-        )
-      );
+      
     }
   });
 };

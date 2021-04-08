@@ -1,4 +1,3 @@
-const errors = require("restify-errors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
@@ -25,7 +24,7 @@ module.exports = (server) => {
           res.send();
           next();
         } catch (err) {
-          return next(new errors.InternalError(err.message));
+         
         }
       });
     });
@@ -51,7 +50,7 @@ module.exports = (server) => {
       next();
     } catch (err) {
       // User unauthorized
-      return next(new errors.UnauthorizedError(err));
+     
     }
   });
 };
