@@ -1,10 +1,14 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const cors = require('cors')
 const mongoose = require("mongoose");
 const config = require("./configs/index");
 const state = { isShutdown: false };
 const axios = require("axios");
+const { handleError,ErrorHandler } = require('./helpers/error')
+const morgan = require('morgan');
+const { DateTime } = require("luxon");
 
 mongoose.Promise = global.Promise;
 mongoose.set("useFindAndModify", false);
@@ -27,10 +31,14 @@ mongoose.connection;
 const server = app.listen(config.PORT, () => {
   console.log("Server started on port " + config.PORT);
 });
+//Enable All CORS Requests
+app.use(cors())
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }))
 // parse application/json
 app.use(express.json())
+//middleware network logging
+app.use(morgan(`\u001b[32m:date[iso]\u001b[0m :remote-addr :remote-user \u001b[31m:method\u001b[0m :url HTTP/:http-version \u001b[35m:status\u001b[0m :res[content-length] - \u001b[36m:response-time ms\u001b[0m`))
 
 app.on("error", (err) => console.log(err));
 
@@ -39,9 +47,9 @@ require("./routes/users")(app);
 // require("./routes/access_bank")(app);
 require("./routes/chachang/menu")(app);
 require("./routes/chachang/payment_type")(app);
+require("./routes/chachang/price_type")(app);
 require("./routes/chachang/order")(app);
 // require("./routes/huays")(app);
-
 
 // test
 app.get("/", async (req, res, next) => {
@@ -55,16 +63,16 @@ app.get("/healthz", (req, res) => {
   res.status(200).send("respon ok");
 });
 
-app.use(function errorHandler (err, req, res, next) {
-  
-  if (res.headersSent) {
-    return next(err)
-  }
-  console.log("err " + err)
-  // res.status(500)
-  // res.render('error', { error: err })
-  res.status(500).send(err)
-})
+//handle error url not found
+app.all("*", function (req, res, next) {
+  console.log("handle error url")
+  // res.status(301).send('Url not found!');
+  next(new ErrorHandler(301, `${req.ip} tried to access ${req.originalUrl}`,'Url not found!'));
+  // next()
+});
+
+//handle error
+app.use(handleError);
 
 // Graceful Shutdown
 const gracefulShutdown = () => {
