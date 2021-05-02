@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const timestamp = require('mongoose-timestamp')
+const Schema = mongoose.Schema;
 
 const MenuSchema = new mongoose.Schema({
   name: {
@@ -13,9 +14,10 @@ const MenuSchema = new mongoose.Schema({
     trim: true
   },
   price: [],
-  type: {
-    type: String
-  },
+  category: [{
+    type: Schema.Types.ObjectId,
+    ref: 'MenuType'
+  }],
   deletedAt: {
     type: Date
   }

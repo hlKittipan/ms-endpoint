@@ -46,6 +46,7 @@ require("./routes/customers")(app);
 require("./routes/users")(app);
 // require("./routes/access_bank")(app);
 require("./routes/chachang/menu")(app);
+require("./routes/chachang/menu_type")(app);
 require("./routes/chachang/payment_type")(app);
 require("./routes/chachang/price_type")(app);
 require("./routes/chachang/order")(app);

@@ -13,6 +13,10 @@ module.exports = {
       const resultPriceType = await priceType.findAvailable();    
       if (result){
         for (const key in result) {
+          if(result[key].category.length > 0){
+            result[key].populate({ path: 'category', select: 'name' })
+            console.log(result[key])
+          }
           result[key] = await addMapPrice(result[key],resultPriceType) 
         }
       }            
@@ -31,7 +35,7 @@ module.exports = {
       try {
         const item = req.body
         const data = new Menu({ ...item });
-        const result = await data.save();
+        const result = await (await data.save()).populate('menutype');
         if (result) {
           const resultPriceType = await priceType.findAvailable();  
           const menu = await addMapPrice(result,resultPriceType) 
