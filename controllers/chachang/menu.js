@@ -9,14 +9,10 @@ module.exports = {
   index: async (req, res, next) => {},
   fetchData: async (req, res, next) => {
     try {
-      const result = await Menu.findAvailable();
+      const result = await Menu.findAvailable().populate('type');
       const resultPriceType = await priceType.findAvailable();    
       if (result){
-        for (const key in result) {
-          if(result[key].category.length > 0){
-            result[key].populate({ path: 'category', select: 'name' })
-            console.log(result[key])
-          }
+        for (const key in result) {          
           result[key] = await addMapPrice(result[key],resultPriceType) 
         }
       }            

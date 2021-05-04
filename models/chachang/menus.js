@@ -14,10 +14,10 @@ const MenuSchema = new mongoose.Schema({
     trim: true
   },
   price: [],
-  category: [{
+  type: {
     type: Schema.Types.ObjectId,
     ref: 'MenuType'
-  }],
+  },
   deletedAt: {
     type: Date
   }
