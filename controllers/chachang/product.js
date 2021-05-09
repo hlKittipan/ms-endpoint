@@ -1,6 +1,6 @@
 const { DateTime } = require("luxon");
 const _ = require("lodash");
-const Menu = require("../../models/chachang/menus");
+const Product = require("../../models/chachang/products");
 const priceType = require("../../models/chachang/price_types");
 const { validationResult } = require('express-validator');
 const { ErrorHandler } = require('../../helpers/error')
@@ -8,7 +8,7 @@ const { ErrorHandler } = require('../../helpers/error')
 module.exports = {
   index: async (req, res, next) => {
     try {
-      const result = await Menu.find().populate('type');
+      const result = await Product.find().populate('type');
       const resultPriceType = await priceType.findAvailable();    
       if (result){
         for (const key in result) {  
@@ -22,7 +22,7 @@ module.exports = {
   },
   fetchData: async (req, res, next) => {
     try {
-      const result = await Menu.findAvailable().populate('type');
+      const result = await Product.findAvailable().populate('type');
       const resultPriceType = await priceType.findAvailable();    
       if (result){
         for (const key in result) {          
@@ -43,12 +43,12 @@ module.exports = {
     }else{
       try {
         const item = req.body
-        const data = new Menu({ ...item });
-        const result = await (await data.save()).populate('menutype');
+        const data = new Product({ ...item });
+        const result = await (await data.save()).populate('type');
         if (result) {
           const resultPriceType = await priceType.findAvailable();  
-          const menu = await addMapPrice(result,resultPriceType) 
-          res.status(200).send(menu);
+          const Product = await addMapPrice(result,resultPriceType) 
+          res.status(200).send(Product);
         }else{
           next(new ErrorHandler(500 , result, 'Something wrong!'))
         }
@@ -67,7 +67,7 @@ module.exports = {
     }else{
       try {
         const item = req.body
-        const result = await Menu.findOneAndUpdate(
+        const result = await Product.findOneAndUpdate(
           {  _id: req.params.id, },
           { ...item },{ new: true }
         );
@@ -89,7 +89,7 @@ module.exports = {
       next(new ErrorHandler(404, errors, 'Not found!'))
     }else{
       try {
-        const result = await Menu.softDelete(req.params.id);   
+        const result = await Product.softDelete(req.params.id);   
         console.log(result)  
         if (result) {
           res.status(200).send({ status : 'Delete success' });
@@ -110,7 +110,7 @@ async function addMapPrice(data,priceType) {
 
     let mapPrice = _.map(priceType,function(value, key) {
 
-      // find menu has price by price type
+      // find Product has price by price type
       let keyData = _.findIndex(cacheData, function(o) { 
         return o._id !== undefined ? o._id.toString() === value._id.toString() : -1; 
       });  

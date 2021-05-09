@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const timestamp = require('mongoose-timestamp')
 const Schema = mongoose.Schema;
 
-const MenuSchema = new mongoose.Schema({
+const ProductSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -12,22 +12,22 @@ const MenuSchema = new mongoose.Schema({
   language:{},
   type: {
     type: Schema.Types.ObjectId,
-    ref: 'MenuType'
+    ref: 'ProductType'
   },
   deletedAt: {
     type: Date
   } 
 });
 
-MenuSchema.plugin(timestamp);
+ProductSchema.plugin(timestamp);
 
-MenuSchema.statics.findAvailable = function(cb) {
+ProductSchema.statics.findAvailable = function(cb) {
   return this.find({ deletedAt:null }, cb);
 };
 
-MenuSchema.statics.softDelete = function(cb) {
+ProductSchema.statics.softDelete = function(cb) {
   return this.findOneAndUpdate( { _id: cb }, { deletedAt: Date.now() });
 };
 
-const Menu = mongoose.model('Menu', MenuSchema);
-module.exports = Menu;
+const Product = mongoose.model('Product', ProductSchema);
+module.exports = Product;

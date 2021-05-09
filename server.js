@@ -45,11 +45,12 @@ app.on("error", (err) => console.log(err));
 require("./routes/customers")(app);
 require("./routes/users")(app);
 // require("./routes/access_bank")(app);
-require("./routes/chachang/menu")(app);
-require("./routes/chachang/menu_type")(app);
+require("./routes/chachang/product")(app);
+require("./routes/chachang/product_type")(app);
 require("./routes/chachang/payment_type")(app);
 require("./routes/chachang/price_type")(app);
 require("./routes/chachang/order")(app);
+require("./routes/chachang/language")(app);
 // require("./routes/huays")(app);
 
 // test

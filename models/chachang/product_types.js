@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const timestamp = require('mongoose-timestamp')
 
-const MenuTypeSchema = new mongoose.Schema({  
+const ProductTypeSchema = new mongoose.Schema({  
   name: {
     type: String,
     required: true,
@@ -11,15 +11,15 @@ const MenuTypeSchema = new mongoose.Schema({
   }
 });
 
-MenuTypeSchema.plugin(timestamp);
+ProductTypeSchema.plugin(timestamp);
 
-MenuTypeSchema.statics.findAvailable = function(cb) {
+ProductTypeSchema.statics.findAvailable = function(cb) {
   return this.find({ deletedAt:null }, cb);
 };
 
-MenuTypeSchema.statics.softDelete = function(cb) {
+ProductTypeSchema.statics.softDelete = function(cb) {
   return this.findOneAndUpdate( { _id: cb }, { deletedAt: Date.now() });
 };
 
-const MenuType = mongoose.model('MenuType', MenuTypeSchema);
-module.exports = MenuType;
+const ProductType = mongoose.model('ProductType', ProductTypeSchema);
+module.exports = ProductType;
