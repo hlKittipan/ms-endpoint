@@ -3,24 +3,20 @@ const timestamp = require('mongoose-timestamp')
 const Schema = mongoose.Schema;
 
 const MenuSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  name_th: {
+  title: {
     type: String,
     required: true,
     trim: true
   },
   price: [],
+  language:{},
   type: {
     type: Schema.Types.ObjectId,
     ref: 'MenuType'
   },
   deletedAt: {
     type: Date
-  }
+  } 
 });
 
 MenuSchema.plugin(timestamp);

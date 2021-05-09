@@ -6,7 +6,20 @@ const { validationResult } = require('express-validator');
 const { ErrorHandler } = require('../../helpers/error')
 
 module.exports = {
-  index: async (req, res, next) => {},
+  index: async (req, res, next) => {
+    try {
+      const result = await Menu.find().populate('type');
+      const resultPriceType = await priceType.findAvailable();    
+      if (result){
+        for (const key in result) {  
+          result[key] = await addMapPrice(result[key],resultPriceType) 
+        }
+      }            
+      res.status(200).send(result);
+    } catch (error) {
+      next(new ErrorHandler(500, error, error))
+    }
+  },
   fetchData: async (req, res, next) => {
     try {
       const result = await Menu.findAvailable().populate('type');
