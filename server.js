@@ -16,6 +16,7 @@ mongoose
   .connect(config.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 1000,
   })
   .then(
     () => {
@@ -49,6 +50,7 @@ require("./routes/chachang/product")(app);
 require("./routes/chachang/product_type")(app);
 require("./routes/chachang/payment_type")(app);
 require("./routes/chachang/price_type")(app);
+// require("./routes/chachang/price_template")(app);
 require("./routes/chachang/order")(app);
 require("./routes/chachang/language")(app);
 // require("./routes/huays")(app);

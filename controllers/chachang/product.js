@@ -44,7 +44,7 @@ module.exports = {
       try {
         const item = req.body
         const data = new Product({ ...item });
-        const result = await (await data.save()).populate('type');
+        const result = await (await data.save()).populate('type').execPopulate();
         if (result) {
           const resultPriceType = await priceType.findAvailable();  
           const Product = await addMapPrice(result,resultPriceType) 
