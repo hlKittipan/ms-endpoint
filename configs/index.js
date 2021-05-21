@@ -3,6 +3,7 @@ module.exports = {
   PORT: process.env.PORT || 4000,
   URL: process.env.BASE_URL || 'http://localhost:4000',
   MONGODB_URI: process.env.MONGODB_URI || '',
+  MONGODB_LOCAL: process.env.MONGODB_LOCAL || process.env.MONGODB_URI,
   JWT_SERCRET: process.env.JWT_SERCRET || 'secret1',
   LINE_BOT: process.env.LINE_BOT || 'Xqhu17b67WG2rcuDibCjTB1oJ1mCtajcuh/dUM2AYpO+M8yb82DiN8XpfTW5It9iJEualWSU8GCPZ3ZFvHmODeJpzsdBvUy6vW5SnVBdOeVACMug5M/hLOb3m7iDdK0xdr8zBmcma5AZZkQog0JLjQdB04t89/1O/w1cDnyilFU=',
   LINE_NOTIFY_ME: process.env.LINE_NOTIFY_ME || 'ouB1sw0e0O9uctoDP6btlBsSIONFFDjSKBsFC93wO0U',

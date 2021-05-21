@@ -2,6 +2,7 @@ const { DateTime } = require("luxon");
 const axios = require("axios");
 const _ = require("lodash");
 const priceTemplate = require("../../models/chachang/price_templates");
+const priceType = require("../../models/chachang/price_types")
 const { validationResult } = require('express-validator');
 const { ErrorHandler } = require('../../helpers/error')
 
@@ -10,6 +11,12 @@ module.exports = {
   fetchData: async (req, res, next) => {
     try {
       const result = await priceTemplate.findAvailable();
+      const resultPriceType = await priceType.findAvailable();    
+      if (result){
+        for (const key in result) {          
+          result[key] = await addMapPrice(result[key],resultPriceType) 
+        }
+      }     
       res.status(200).send(result);
     } catch (error) {
       next(new ErrorHandler(500, error, error))
@@ -23,10 +30,13 @@ module.exports = {
       next(new ErrorHandler(422, errors, errors))
     }
     try {
-      const data = new priceTemplate({...req.body,});
+      const item = req.body
+      const data = new priceTemplate({ ...item });
       const result = await data.save();
       if (result) {
-        res.status(200).send(result);
+        const resultPriceType = await priceType.findAvailable();  
+        const getPrice = await addMapPrice(result,resultPriceType) 
+        res.status(200).send(getPrice);
       }else{
         next(new ErrorHandler(500 , result, 'Something wrong!'))
       }
@@ -73,3 +83,32 @@ module.exports = {
     }
   }
 }; 
+
+async function addMapPrice(data,priceType) {
+  if (data.price) {
+
+    let cacheData = data.price
+
+    let mapPrice = _.map(priceType,function(value, key) {
+
+      // find Product has price by price type
+      let keyData = _.findIndex(cacheData, function(o) { 
+        return o._id !== undefined ? o._id.toString() === value._id.toString() : -1; 
+      });  
+
+      if (keyData>-1){
+        return {price: cacheData[keyData].price, ...value.toObject()};
+      }else{                
+        return {price: 0.0, ...value.toObject()};
+      }      
+
+    });
+
+    data.price = mapPrice
+    return data
+  }else{
+    data.price = _.map(priceType,(value, key) => {
+      return {price: 0.0, ...value.toObject()}
+    });
+  }
+}
