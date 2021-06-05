@@ -9,6 +9,7 @@ const axios = require("axios");
 const { handleError,ErrorHandler } = require('./helpers/error')
 const morgan = require('morgan');
 const { DateTime } = require("luxon");
+const passport = require('passport');
 
 mongoose.Promise = global.Promise;
 mongoose.set("useFindAndModify", false);
@@ -37,13 +38,16 @@ app.use(cors())
 app.use(express.urlencoded({ extended: false }))
 // parse application/json
 app.use(express.json())
+
+app.use(passport.initialize())
+
 //middleware network logging
 app.use(morgan(`\u001b[32m:date[iso]\u001b[0m :remote-addr :remote-user \u001b[31m:method\u001b[0m :url HTTP/:http-version \u001b[35m:status\u001b[0m :res[content-length] - \u001b[36m:response-time ms\u001b[0m`))
 
 app.on("error", (err) => console.log(err));
 
+require("./routes/endpoint/authenication/auth")(app);
 require("./routes/customers")(app);
-require("./routes/users")(app);
 // require("./routes/access_bank")(app);
 require("./routes/chachang/product")(app);
 require("./routes/chachang/product_type")(app);

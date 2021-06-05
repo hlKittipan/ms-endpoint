@@ -14,5 +14,6 @@ module.exports = {
   WP_USERNAME: process.env.WP_USERNAME || '',
   WP_PASSWORD: process.env.WP_PASSWORD || '',
   SUSE: process.env.SUSE || '',
-  SPAS: process.env.SPAS || ''
+  SPAS: process.env.SPAS || '',
+  AUTH_USER_SECRET: process.env.AUTH_USER_SECRET || '',
 }
