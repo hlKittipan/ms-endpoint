@@ -20,9 +20,6 @@ module.exports = (server) => {
   server.post('/auth/login', async (req, res) => {
     console.log(req.body)
     passport.authenticate('local', { session: false }, (err, user, message) => {
-      console.log('user'+user)
-      console.log(err)
-      console.log(message)
       if (err) {
         // you should log it
         return res.status(500).send(err)
@@ -35,25 +32,21 @@ module.exports = (server) => {
       }
     })(req, res)
   })
-  
-  server.get('/auth/user', async (req, res) => {
-    passport.authenticate('jwt', { session: false }, (err, user, message) => {
-      console.log('user'+user)
-      console.log(err)
-      console.log(message)
-      if (err) {
-        // you should log it
-        return res.status(400).send(err)
-      } else if (!user) {
-        // you should log it
-        return res.status(403).send({ message })
-      } else {
-        return res.send({ user })
+
+  server.post('/auth/refresh', passport.authenticate('jwt',{session: false}),(req,res,next)=>{
+    try {
+      const { refreshToken } = req.body
+      const token = AuthenticationController.getRefreshToken(refreshToken)
+      if (token) {
+        res.json({token})
       }
-    })(res, req)
+    } catch (error) {
+      next(new ErrorHandler(500, error, error))
+    }
   })
 
-  server.get('/secret', passport.authenticate('jwt',{session: false}),(req,res,next)=>{
-    res.json("Secret Data")
+  server.get('/auth/user', passport.authenticate('jwt',{session: false}),(req,res,next)=>{
+    const user = req.user
+    res.json({user:user});
   })
 }
