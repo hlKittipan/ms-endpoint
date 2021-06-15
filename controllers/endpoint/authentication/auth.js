@@ -15,21 +15,26 @@ const JWTStrategy   = passportJWT.Strategy;
 const User = require('../../../models/endpoint/authentication/auth')
 const jwt = require('jsonwebtoken')
 
+const Setting = require("../../../models/endpoint/settings/index");
+
 // Refresh tokens
 const refreshTokens = {}
 
+//function check token
 passport.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     secretOrKey: authUserSecret
   },
-  function (jwtPayload, done) {
+  async function (jwtPayload, done) {
 
     return GetUser(jwtPayload.email)
-      .then((user) => {
+      .then( async (user) => {
         if (user) {
+         console.log(user)
           return done(null, {
             ...jwtPayload,
-            time:new Date()
+            time:new Date(),
+            settings:user.settings
           })
         } else {
           return done(null, false, 'Failed')
@@ -41,6 +46,7 @@ passport.use(new JWTStrategy({
   }
 ))
 
+// function login
 passport.use(
   new LocalStrategy({
       usernameField: 'email',
@@ -107,8 +113,14 @@ async function GetUser(email) {
   return await User.findOne({
       email
     })
-    .then((data) => {
-      return data
+    .then( async (data) => {
+
+      const results = {user:data}
+      const settings = await Setting.find({user_id:data.id})
+
+      results.settings = settings || {}
+      
+      return results
     }).catch((error) => {
       next(new ErrorHandler(500, error, error))
     })
@@ -129,5 +141,6 @@ module.exports = {
   generatePasswordHash,
   CreateUser,
   GetUser,
-  signUserToken
+  signUserToken,
+  getRefreshToken
 }
