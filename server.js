@@ -17,6 +17,7 @@ mongoose
   .connect(config.MONGODB_LOCAL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true,
   })
   .then(
     () => {
@@ -45,6 +46,33 @@ app.use(passport.initialize())
 app.use(morgan(`\u001b[32m:date[iso]\u001b[0m :remote-addr :remote-user \u001b[31m:method\u001b[0m :url HTTP/:http-version \u001b[35m:status\u001b[0m :res[content-length] - \u001b[36m:response-time ms\u001b[0m`))
 
 app.on("error", (err) => console.log(err));
+
+const { networkInterfaces } = require('os');
+
+const nets = networkInterfaces();
+
+const parser = require('ua-parser-js');
+
+app.use((req, res, next) => {
+  
+  const results = Object.create(null); // Or just '{}', an empty object
+
+  for (const name of Object.keys(nets)) {
+      for (const net of nets[name]) {
+          // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
+          if (net.family === 'IPv4' && !net.internal) {
+              if (!results[name]) {
+                  results[name] = [];
+              }
+              results[name].push(net.address);
+          }
+      }
+  }
+  const ua = parser(req.headers['user-agent']);
+  console.log(results)
+  console.log(JSON.stringify(ua, null, '  '));  
+  next()
+})
 
 require("./routes/endpoint/authenication/auth")(app);
 require("./routes/customers")(app);
