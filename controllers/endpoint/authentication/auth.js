@@ -26,7 +26,6 @@ passport.use(new JWTStrategy({
     secretOrKey: authUserSecret
   },
   async function (jwtPayload, done) {
-
     return GetUser(jwtPayload.email)
       .then( async (user) => {
         if (user) {
@@ -105,7 +104,7 @@ async function CreateUser(email, password) {
     .then((data) => {
       return data
     }).catch((error) => {
-      next(new ErrorHandler(500, error, error))
+      throw error
     })
 }
 
@@ -115,11 +114,12 @@ async function GetUser(email) {
     })
     .then( async (data) => {
 
-      const results = {user:data}
+      const results = {}
       const settings = await Setting.find({user_id:data.id})
-
-      results.settings = settings || {}
-      
+      results["id"] = data._id || null
+      results["email"] = data.email || null
+      results["password"] = data.password || null
+      results["settings"] = settings || []
       return results
     }).catch((error) => {
       next(new ErrorHandler(500, error, error))

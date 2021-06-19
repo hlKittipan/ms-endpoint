@@ -12,6 +12,13 @@ const handleError = (err, req, res, next) => {
   if (res.headersSent) {
     return next(err)
   }
+  
+  if (err.errors){    
+    if (err.errors.name === 'MongoError' && err.errors.code === 11000) {
+      err.message = 'There was a duplicate key error'
+    }
+  }
+
   const { statusCode, errors, message } = err;
   res.status(statusCode).json({
     statusCode,
