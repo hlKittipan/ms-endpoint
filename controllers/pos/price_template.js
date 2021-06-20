@@ -1,8 +1,8 @@
 const { DateTime } = require("luxon");
 const axios = require("axios");
 const _ = require("lodash");
-const priceTemplate = require("../../models/chachang/price_templates");
-const priceType = require("../../models/chachang/price_types")
+const priceTemplate = require("../../models/pos/price_templates");
+const priceType = require("../../models/pos/price_types")
 const { validationResult } = require('express-validator');
 const { ErrorHandler } = require('../../helpers/error')
 

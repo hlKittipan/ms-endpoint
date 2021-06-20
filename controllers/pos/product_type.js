@@ -1,7 +1,7 @@
 const { DateTime } = require("luxon");
 const axios = require("axios");
 const _ = require("lodash");
-const paymentType = require("../../models/chachang/payment_types");
+const productType = require("../../models/pos/product_types");
 const { validationResult } = require('express-validator');
 const { ErrorHandler } = require('../../helpers/error')
 
@@ -9,7 +9,7 @@ module.exports = {
   index: async (req, res, next) => {},
   fetchData: async (req, res, next) => {
     try {
-      const result = await paymentType.findAvailable();
+      const result = await productType.findAvailable();
       res.status(200).send(result);
     } catch (error) {
       next(new ErrorHandler(500, error, error))
@@ -23,9 +23,7 @@ module.exports = {
       next(new ErrorHandler(422, errors, errors))
     }
     try {
-      const data = new paymentType({
-        name: req.body.name,      
-      });
+      const data = new productType({...req.body,});
       const result = await data.save();
       if (result) {
         res.status(200).send(result);
@@ -46,7 +44,7 @@ module.exports = {
     }
     try {
       const item = req.body
-      const result = await paymentType.findOneAndUpdate({_id: req.params.id,},{...item},{ new: true });
+      const result = await productType.findOneAndUpdate({_id: req.params.id,},{...item},{ new: true });
       if (result) {
         res.status(200).send(result);
       }else{
@@ -64,7 +62,7 @@ module.exports = {
       next(new ErrorHandler(422, errors, 'Invalid value'))
     }
     try {
-      const result = await paymentType.softDelete(req.params.id);
+      const result = await productType.softDelete(req.params.id);
       if (result) {
         res.status(200).send({ status : 'Delete success' });
       }else{
@@ -74,4 +72,4 @@ module.exports = {
       next(new ErrorHandler(422, error, error))
     }
   }
-};
+}; 

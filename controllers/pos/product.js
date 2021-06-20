@@ -1,7 +1,7 @@
 const { DateTime } = require("luxon");
 const _ = require("lodash");
-const Product = require("../../models/chachang/products");
-const priceType = require("../../models/chachang/price_types");
+const Product = require("../../models/pos/products");
+const priceType = require("../../models/pos/price_types");
 const { validationResult } = require('express-validator');
 const { ErrorHandler } = require('../../helpers/error')
 

@@ -1,7 +1,7 @@
 const { DateTime } = require("luxon");
 const axios = require("axios");
 const _ = require("lodash");
-const priceType = require("../../models/chachang/price_types");
+const languageCode = require("../../models/pos/language_codes");
 const { validationResult } = require('express-validator');
 const { ErrorHandler } = require('../../helpers/error')
 
@@ -9,7 +9,7 @@ module.exports = {
   index: async (req, res, next) => {},
   fetchData: async (req, res, next) => {
     try {
-      const result = await priceType.findAvailable();
+      const result = await languageCode.findAvailable();
       res.status(200).send(result);
     } catch (error) {
       next(new ErrorHandler(500, error, error))
@@ -23,7 +23,7 @@ module.exports = {
       next(new ErrorHandler(422, errors, errors))
     }
     try {
-      const data = new priceType({...req.body,});
+      const data = new languageCode({...req.body,});
       const result = await data.save();
       if (result) {
         res.status(200).send(result);
@@ -44,7 +44,7 @@ module.exports = {
     }
     try {
       const item = req.body
-      const result = await priceType.findOneAndUpdate({_id: req.params.id,},{...item},{ new: true });
+      const result = await languageCode.findOneAndUpdate({_id: req.params.id,},{...item},{ new: true });
       if (result) {
         res.status(200).send(result);
       }else{
@@ -62,7 +62,7 @@ module.exports = {
       next(new ErrorHandler(422, errors, 'Invalid value'))
     }
     try {
-      const result = await priceType.softDelete(req.params.id);
+      const result = await languageCode.softDelete(req.params.id);
       if (result) {
         res.status(200).send({ status : 'Delete success' });
       }else{

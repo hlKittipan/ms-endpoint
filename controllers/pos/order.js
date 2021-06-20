@@ -1,8 +1,8 @@
 const { DateTime } = require("luxon");
 const axios = require("axios");
 const _ = require("lodash");
-const order = require("../../models/chachang/orders");
-const orderDetail = require("../../models/chachang/order_details");
+const order = require("../../models/pos/orders");
+const orderDetail = require("../../models/pos/order_details");
 const { validationResult } = require('express-validator');
 const { ErrorHandler } = require('../../helpers/error')
 

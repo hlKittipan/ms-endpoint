@@ -77,13 +77,13 @@ app.use((req, res, next) => {
 require("./routes/endpoint/authenication/auth")(app);
 require("./routes/customers")(app);
 // require("./routes/access_bank")(app);
-require("./routes/chachang/product")(app);
-require("./routes/chachang/product_type")(app);
-require("./routes/chachang/payment_type")(app);
-require("./routes/chachang/price_type")(app);
-require("./routes/chachang/price_template")(app);
-require("./routes/chachang/order")(app);
-require("./routes/chachang/language")(app);
+require("./routes/pos/product")(app);
+require("./routes/pos/product_type")(app);
+require("./routes/pos/payment_type")(app);
+require("./routes/pos/price_type")(app);
+require("./routes/pos/price_template")(app);
+require("./routes/pos/order")(app);
+require("./routes/pos/language")(app);
 // require("./routes/huays")(app);
 
 // test
