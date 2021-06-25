@@ -33,7 +33,8 @@ passport.use(new JWTStrategy({
           return done(null, {
             ...jwtPayload,
             time:new Date(),
-            settings:user.settings
+            settings:user.settings,
+            scope:['test','admin']
           })
         } else {
           return done(null, false, 'Failed')
@@ -115,11 +116,15 @@ async function GetUser(email) {
     .then( async (data) => {
 
       const results = {}
-      const settings = await Setting.find({user_id:data.id})
+      let settings = await Setting.find({user_id:data.id})
+      if (settings.length == 0){
+        settings = {}
+        settings["default_language"] = 'en'
+      }
       results["id"] = data._id || null
       results["email"] = data.email || null
       results["password"] = data.password || null
-      results["settings"] = settings || []
+      results["settings"] = settings 
       return results
     }).catch((error) => {
       next(new ErrorHandler(500, error, error))
