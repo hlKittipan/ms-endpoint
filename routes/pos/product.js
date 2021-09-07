@@ -17,4 +17,7 @@ module.exports = (server) => {
   server.delete("/pos/product/:id", [check('id').isMongoId()], async (req, res, next) => {
     Product.delete(req, res, next);
   });
+  server.get("/pos/product-list", async (req, res, next) => {
+    Product.productToOrder(req, res, next);
+  });
 };

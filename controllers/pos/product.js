@@ -12,7 +12,7 @@ module.exports = {
       const resultPriceType = await priceType.findAvailable();    
       if (result){
         for (const key in result) {  
-          result[key] = await addMapPrice(result[key],resultPriceType) 
+          result[key] = await productMapPrice(result[key],resultPriceType) 
         }
       }            
       res.status(200).send(result);
@@ -26,7 +26,7 @@ module.exports = {
       const resultPriceType = await priceType.findAvailable();    
       if (result){
         for (const key in result) {          
-          result[key] = await addMapPrice(result[key],resultPriceType) 
+          result[key] = await productMapPrice(result[key],resultPriceType) 
         }
       }            
       res.status(200).send(result);
@@ -47,7 +47,7 @@ module.exports = {
         const result = await (await data.save()).populate('type').execPopulate();
         if (result) {
           const resultPriceType = await priceType.findAvailable();  
-          const Product = await addMapPrice(result,resultPriceType) 
+          const Product = await productMapPrice(result,resultPriceType) 
           res.status(200).send(Product);
         }else{
           next(new ErrorHandler(500 , result, 'Something wrong!'))
@@ -100,10 +100,15 @@ module.exports = {
         next(new ErrorHandler(422, error, error))
       }
     }    
+  },
+
+  productToOrder: async (req, res, next) => {
+    const data = await productTypeMapProduct()
+    res.status(200).send(data);
   }
 };
 
-async function addMapPrice(data,priceType) {
+async function productMapPrice(data,priceType) {
   if (data.price) {
 
     let cacheData = data.price
@@ -130,4 +135,25 @@ async function addMapPrice(data,priceType) {
       return {price: 0.0, ...value.toObject()}
     });
   }
+}
+
+async function productTypeMapProduct () {
+  let cacheData = {}
+  const result = await Product.findAvailable().populate('type');
+  const resultPriceType = await priceType.findAvailable();    
+  if (result){
+    for (const key in result) {          
+      result[key] = await productMapPrice(result[key],resultPriceType) 
+      if (result[key].type) {
+        if (_.has(cacheData, result[key].type._id)) {
+            cacheData[result[key].type._id].product.push(result[key])
+        } else {
+          cacheData[result[key].type._id].productType = result[key].type.name
+          cacheData[result[key].type._id].product = []
+          cacheData[result[key].type._id].product.push(result[key])
+        }
+      }
+    }   
+  }   
+  return cacheData
 }
