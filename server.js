@@ -84,6 +84,8 @@ require("./routes/pos/price_type")(app);
 require("./routes/pos/price_template")(app);
 require("./routes/pos/order")(app);
 require("./routes/pos/language")(app);
+require("./routes/pos/add_on")(app);
+require("./routes/pos/add_on_type")(app);
 // require("./routes/huays")(app);
 
 // test
