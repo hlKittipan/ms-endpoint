@@ -28,6 +28,7 @@
     "express": "^4.17.1",
     "express-validator": "^6.10.1",
     "form-data": "^4.0.0",
+    "gulp": "^4.0.2",
     "jsonwebtoken": "^8.5.1",
     "jwt-simple": "^0.5.6",
     "lodash": "^4.17.20",
@@ -45,8 +46,9 @@
     "querystring": "^0.2.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
-    "ua-parser-js": "^0.7.28",
-    "tar": ">=6.1.2"
+    "sonarqube-scanner": "^2.8.1",
+    "tar": ">=6.1.2",
+    "ua-parser-js": "^0.7.28"
   },
   "engines": {
     "node": "12.x"

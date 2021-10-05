@@ -69,8 +69,8 @@ app.use((req, res, next) => {
       }
   }
   const ua = parser(req.headers['user-agent']);
-  console.log(results)
-  console.log(JSON.stringify(ua, null, '  '));  
+  // console.log(results)
+  // console.log(JSON.stringify(ua, null, '  '));  
   next()
 })
 

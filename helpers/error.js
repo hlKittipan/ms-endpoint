@@ -13,10 +13,8 @@ const handleError = (err, req, res, next) => {
     return next(err)
   }
   
-  if (err.errors){    
-    if (err.errors.name === 'MongoError' && err.errors.code === 11000) {
-      err.message = 'There was a duplicate key error'
-    }
+  if (err.errors && err.errors.name === 'MongoError' && err.errors.code === 11000) {
+    err.message = 'There was a duplicate key error'
   }
 
   const { statusCode, errors, message } = err;
