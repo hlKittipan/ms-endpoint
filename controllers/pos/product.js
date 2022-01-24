@@ -120,11 +120,7 @@ async function productMapPrice(data,priceType) {
         return o._id !== undefined ? o._id.toString() === value._id.toString() : -1; 
       });  
 
-      if (keyData>-1){
-        return {price: cacheData[keyData].price, ...value.toObject()};
-      }else{                
-        return {price: 0.0, ...value.toObject()};
-      }      
+      return keyData>-1 ? {price: cacheData[keyData].price, ...value.toObject()} : {price: 0.0, ...value.toObject()};      
 
     });
 
