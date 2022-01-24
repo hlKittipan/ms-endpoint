@@ -61,12 +61,12 @@ module.exports = {
     let id = 0;
     
     await Lotto.findOne({ date: getDate }).then(function (value) {
-      if (value == null) {
+      if (value === null) {
         isCreate = true;
       } else {
        id = value._id;
         for (const key in value.yeekee) {
-          if (value.yeekee[key] != null) {
+          if (value.yeekee[key] !== null) {
             yeekee[key] = value.yeekee[key];
             last_key++;
           }
@@ -244,7 +244,7 @@ async function createData(req, res, next, isCreate, id, current_data, user_id) {
 
   if (data != false) {
     for (const key in data) {
-      if (data[key] != null) {
+      if (data[key] !== null) {
         yeekee[key] = data[key];
         last_key++;
       }

@@ -155,7 +155,7 @@ function createData (req, res, next, isCreate, id) {
   const date_thai = req.data.now;
 
   for (const key in data) {
-    if (data[key] != null ){
+    if (data[key] !== null ){
       yeekee[key] = data[key].period.result;
     }
   }
