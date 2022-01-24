@@ -63,13 +63,9 @@ passport.use(
             })
           }
           const validation = await comparePasswords(password, user.password)
-          if (validation) {
-            return done(null, user)
-          } else {
-            return done(null, false, {
+          return validation ? done(null, user) : done(null, false, {
               message: 'Authentication failed'
-            })
-          }
+            });
         }).catch((err) => {
           return done(err)
         })
