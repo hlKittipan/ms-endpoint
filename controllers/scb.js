@@ -131,11 +131,7 @@ async function checkSessionAvailable(){
   let resp = await axios.post(process.env.SCB_LINK_MYACCO, bodyFormData, { headers: bodyFormData.getHeaders() })
   let body = cheerio.load(resp.data)
   const nextPage = body("#f1").attr("action")
-  if(nextPage === undefined){
-    return true
-  }else{
-    return false
-  }
+  return nextPage === undefined ? true : false;
 }
 
 

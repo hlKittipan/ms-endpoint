@@ -17,11 +17,7 @@ module.exports = {
   findData: async (req, res, next, current_data, remove_duplicate, user_id) => {
     let newLotto = "";
     const lotto = await Lotto.findOne({ date: date }).then(function (value) {
-      if (value == null) {
-        newLotto = createData(req, res, next, true, 0, current_data, user_id);
-      } else {
-        newLotto = createData(value, res, next, false, value._id, current_data, user_id);
-      }
+      newLotto = value == null ? createData(req, res, next, true, 0, current_data, user_id) : createData(value, res, next, false, value._id, current_data, user_id);
     });
   },
 
