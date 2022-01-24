@@ -17,7 +17,7 @@ module.exports = {
   findData: async (req, res, next, current_data, remove_duplicate, user_id) => {
     let newLotto = "";
     const lotto = await Lotto.findOne({ date: date }).then(function (value) {
-      if (value == null) {
+      if (value === null) {
         newLotto = createData(req, res, next, true, 0, current_data, user_id);
       } else {
         newLotto = createData(value, res, next, false, value._id, current_data, user_id);
@@ -65,12 +65,12 @@ module.exports = {
     let id = 0;
     
     await Lotto.findOne({ date: getDate }).then(function (value) {
-      if (value == null) {
+      if (value === null) {
         isCreate = true;
       } else {
        id = value._id;
         for (const key in value.yeekee) {
-          if (value.yeekee[key] != null) {
+          if (value.yeekee[key] !== null) {
             yeekee[key] = value.yeekee[key];
             last_key++;
           }
@@ -248,7 +248,7 @@ async function createData(req, res, next, isCreate, id, current_data, user_id) {
 
   if (data != false) {
     for (const key in data) {
-      if (data[key] != null) {
+      if (data[key] !== null) {
         yeekee[key] = data[key];
         last_key++;
       }
