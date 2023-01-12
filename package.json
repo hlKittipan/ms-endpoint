@@ -29,7 +29,7 @@
     "express-validator": "^6.10.1",
     "form-data": "^4.0.0",
     "gulp": "^4.0.2",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jwt-simple": "^0.5.6",
     "lodash": "^4.17.20",
     "luxon": "^1.25.0",
